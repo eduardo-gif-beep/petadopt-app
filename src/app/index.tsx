@@ -1,4 +1,4 @@
-import PantallaLogin from '../components/PantallaLogin';
+import PantallaLogin from '../views/PantallaLogin';
 
 export default function Index() {
   return (
