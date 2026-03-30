@@ -23,6 +23,7 @@ export const useLogin = () => {
         await StorageService.saveToken('userToken', fakeToken);
 
         Alert.alert('Success', 'Login exitoso');
+        console.log("LOGIN ESIsTOSO")
         setEmail('');
         setPassword('');
     };
