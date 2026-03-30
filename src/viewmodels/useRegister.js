@@ -38,6 +38,10 @@ export const useRegister = () => {
         // Guardar usuario en AsyncStorage
         await StorageService.setItem('user', newUser);
 
+        //prueba para saber si guarda en ASYNCSTORAGE
+        //const savedUser = await StorageService.getItem('user');
+        //console.log("Usuario guardado:", savedUser);
+
         Alert.alert('Success', 'Usuario registrado correctamente');
         setName('');
         setLastName('');
