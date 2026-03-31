@@ -1,7 +1,7 @@
-import { Button, StyleSheet, Text, TextInput, View, Switch } from 'react-native';
+import { Button, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
 import { useRegister } from '../viewmodels/useRegister';
 
-const PantallaRegister = () => {
+const PantallaRegister = ({ navigation }) => {
 
     const {
         name,
@@ -16,6 +16,10 @@ const PantallaRegister = () => {
         setTienePatio,
         handleRegister
     } = useRegister();
+    const onRegisterPress = async () => {
+        await handleRegister();
+        navigation.replace("Pets");
+    };
 
     return(
         <View style={styles.contenedor}>
@@ -65,6 +69,15 @@ const PantallaRegister = () => {
                 title="Registrarse"
                 onPress={handleRegister}
                 color='#007bff'
+            />
+
+            <Text style={{ textAlign: "center", marginTop: 15 }}>
+                ¿Ya tienes cuenta?
+            </Text>
+
+            <Button
+                title="Ir a login"
+                onPress={() => navigation.goBack()}
             />
         </View>
     );

@@ -1,19 +1,15 @@
-import { useState } from "react";
 import { Button, Text, TextInput, View } from "react-native";
+import { useAdoptionRequest } from "../viewmodels/useAdoptionRequest";
 
-const PantallaAdoptionRequest = ({ pet, goBack }) => {
+const PantallaAdoptionRequest = ({ route, navigation }) => {
 
-    const [motivo, setMotivo] = useState('');
+    const { pet } = route.params;
 
-    const enviarSolicitud = () => {
-        console.log({
-            petId: pet.id,
-            motivo
-        });
-
-        alert("Solicitud enviada 🐶");
-        goBack();
-    };
+    const {
+        motivo,
+        setMotivo,
+        enviarSolicitud
+    } = useAdoptionRequest();
 
     return (
         <View style={{ padding:20 }}>
@@ -26,7 +22,15 @@ const PantallaAdoptionRequest = ({ pet, goBack }) => {
                 style={{ borderWidth:1, marginVertical:10 }}
             />
 
-            <Button title="Enviar solicitud" onPress={enviarSolicitud} />
+            <Button 
+                title="Enviar solicitud" 
+                onPress={() => enviarSolicitud(pet, navigation)} 
+            />
+
+            <Button 
+                title="Cancelar"
+                onPress={() => navigation.goBack()}
+            />
         </View>
     );
 };

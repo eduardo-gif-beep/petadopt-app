@@ -1,25 +1,34 @@
 import { Button, FlatList, Text, View } from "react-native";
+import { useAdminPets } from "../viewmodels/useAdminPets";
 
-const mockPets = [
-    { id: "1", name: "Rex" },
-    { id: "2", name: "Michi" }
-];
+const PantallaAdminPets = ({ navigation }) => {
 
-const PantallaAdminPets = () => {
+    const { pets, deletePet } = useAdminPets();
 
     return (
         <View style={{ padding:20 }}>
-            <Text>Administrar Mascotas</Text>
+            <Text style={{ fontSize:20, marginBottom:10 }}>
+                Administrar Mascotas
+            </Text>
 
             <FlatList
-                data={mockPets}
+                data={pets}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
                     <View style={{ marginBottom:10 }}>
                         <Text>{item.name}</Text>
-                        <Button title="Eliminar" onPress={() => alert("Eliminar")} />
+
+                        <Button 
+                            title="Eliminar" 
+                            onPress={() => deletePet(item.id)} 
+                        />
                     </View>
                 )}
+            />
+
+            <Button 
+                title="Volver"
+                onPress={() => navigation.goBack()}
             />
         </View>
     );

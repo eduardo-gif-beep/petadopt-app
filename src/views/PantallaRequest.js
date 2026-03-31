@@ -1,22 +1,28 @@
-import { FlatList, Text, View } from "react-native";
+import { FlatList, Text, View, Button } from "react-native";
+import { useRequests } from "../viewmodels/useRequests";
 
-const mockRequests = [
-    { id: "1", pet: "Rex", status: "pendiente" },
-    { id: "2", pet: "Michi", status: "aprobado" }
-];
+const PantallaRequests = ({ navigation }) => {
 
-const PantallaRequests = () => {
+    const { requests } = useRequests();
 
     return (
         <View style={{ padding:20 }}>
-            <Text>Mis solicitudes</Text>
+            <Text style={{ fontSize:20, marginBottom:10 }}>
+                Mis solicitudes
+            </Text>
 
             <FlatList
-                data={mockRequests}
+                data={requests}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
-                    <Text>{item.pet} - {item.status}</Text>
+                    <Text style={{ marginBottom:5 }}>
+                        {item.pet} - {item.status}
+                    </Text>
                 )}
+            />
+            <Button 
+                title="Volver"
+                onPress={() => navigation.goBack()}
             />
         </View>
     );

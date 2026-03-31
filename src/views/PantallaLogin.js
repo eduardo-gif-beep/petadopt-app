@@ -10,6 +10,11 @@ const PantallaLogin = () => {
         setPassword,
         handleLogin
     } = useLogin();
+
+    const onLoginPress = async () => {
+        await handleLogin();
+        navigation.replace("Pets");
+    };
     
     return(
         <View style={styles.contenedor}>
@@ -35,9 +40,20 @@ const PantallaLogin = () => {
 
             <Button
             title="Iniciar sesion"
-            onPress={handleLogin}
+            onPress={onLoginPress}
             color='#28a745'
             />
+
+            <Text>
+                ¿No tienes cuenta?
+            </Text>
+
+            <Button
+                title="Ir a registro"
+                onPress={() => navigation.navigate("Register")}
+                color="#007bff"
+            />
+
         </View>
     );
 }

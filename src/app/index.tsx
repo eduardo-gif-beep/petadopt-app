@@ -1,7 +1,6 @@
-import PantallaRegister from '../views/PantallaLogin';
+import React from "react";
+import AppNavigator from "../navigation/AppNavigator";
 
 export default function Index() {
-  return (
-    PantallaRegister()
-    );
+  return <AppNavigator />;  
 }
