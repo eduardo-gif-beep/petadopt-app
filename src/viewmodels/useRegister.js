@@ -19,11 +19,14 @@ export const useRegister = () => {
 
         if (!StorageService.validate('email', email)) {
             Alert.alert('Error', 'Correo inválido');
+            console.log("error en correo");
+            
             return;
         }
 
         if (!StorageService.validate('password', password)) {
             Alert.alert('Error', 'Contraseña inválida (mínimo 8 caracteres, mayúscula, número)');
+            console.log("error en contrra");
             return;
         }
 

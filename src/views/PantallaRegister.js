@@ -16,6 +16,7 @@ const PantallaRegister = ({ navigation }) => {
         setTienePatio,
         handleRegister
     } = useRegister();
+
     const onRegisterPress = async () => {
         await handleRegister();
         navigation.replace("Pets");
@@ -67,7 +68,7 @@ const PantallaRegister = ({ navigation }) => {
 
             <Button
                 title="Registrarse"
-                onPress={handleRegister}
+                onPress={onRegisterPress}
                 color='#007bff'
             />
 

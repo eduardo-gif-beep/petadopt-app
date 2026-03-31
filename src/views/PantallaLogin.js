@@ -1,7 +1,7 @@
 import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useLogin } from '../viewmodels/useLogin';
 
-const PantallaLogin = () => {
+const PantallaLogin = ({ navigation }) => {
     //deconstruir nuestro hook
     const {
         email,
