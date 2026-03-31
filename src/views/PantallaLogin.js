@@ -12,8 +12,11 @@ const PantallaLogin = ({ navigation }) => {
     } = useLogin();
 
     const onLoginPress = async () => {
-        await handleLogin();
-        navigation.replace("Pets");
+        if(await handleLogin()){
+            navigation.replace("Pets");
+        } else {
+            console.log("error 404 we");
+        }
     };
     
     return(
