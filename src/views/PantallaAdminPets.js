@@ -9,13 +9,13 @@ const PantallaAdminPets = ({ navigation }) => {
         <View style={styles.contenedor}>
             <Text style={styles.titulo}>Pets Management (Admin)</Text>
 
-            {/* <View style={styles.headerButtons}>
+            <View style={styles.headerButtons}>
                 <Button 
                     title="Añadir Mascota" 
                     onPress={() => navigation.navigate("RegisterPet")} 
                     color="#28a745"
                 />
-            </View> */}
+            </View>
 
             <FlatList
                 data={pets}

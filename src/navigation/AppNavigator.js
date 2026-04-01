@@ -7,6 +7,7 @@ import PantallaLogin from "../views/PantallaLogin";
 import PantallaPets from "../views/PantallaPets";
 import PantallaRegister from "../views/PantallaRegister";
 import PantallaRequests from "../views/PantallaRequest";
+import PantallaRegisterPet from "../views/PantallaRegisterPet";
 
 const Stack = createNativeStackNavigator();
 
@@ -20,6 +21,7 @@ const AppNavigator = () => {
             <Stack.Screen name="Request" component={PantallaAdoptionRequest} />
             <Stack.Screen name="Requests" component={PantallaRequests} />
             <Stack.Screen name="Admin" component={PantallaAdminPets} />
+            <Stack.Screen name="RegisterPet" component={PantallaRegisterPet} />
 
         </Stack.Navigator>
     );
