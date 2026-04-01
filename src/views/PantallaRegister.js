@@ -1,48 +1,47 @@
-import { Button, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
+import React from 'react';
+import { Button, StyleSheet, Switch, Text, TextInput, View, ScrollView } from 'react-native';
 import { useRegister } from '../viewmodels/useRegister';
 
 const PantallaRegister = ({ navigation }) => {
-
     const {
-        name,
-        setName,
-        lastName,
-        setLastName,
-        email,
-        setEmail,
-        password,
-        setPassword,
-        tienePatio,
-        setTienePatio,
+        name, setName,
+        lastName, setLastName,
+        email, setEmail,
+        phone, setPhone,
+        address, setAddress,
+        password, setPassword,
+        tienePatio, setTienePatio,
         handleRegister
     } = useRegister();
 
     const onRegisterPress = async () => {
-        await handleRegister();
-        navigation.replace("Pets");
+        const success = await handleRegister();
+        if (success) {
+            navigation.replace("Login");
+        }
     };
 
-    return(
-        <View style={styles.contenedor}>
-            <Text style={styles.titulo}>Registro</Text>
+    return (
+        <ScrollView contentContainerStyle={styles.contenedor}>
+            <Text style={styles.titulo}>Create Account</Text>
 
             <TextInput
                 style={styles.input}
-                placeholder="Nombre"
+                placeholder="FIRST NAME"
                 value={name}
                 onChangeText={setName}
             />
 
             <TextInput
                 style={styles.input}
-                placeholder="Apellido"
+                placeholder="LAST NAME"
                 value={lastName}
                 onChangeText={setLastName}
             />
 
             <TextInput
                 style={styles.input}
-                placeholder="Correo Electronico"
+                placeholder="E-MAIL"
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
@@ -51,68 +50,92 @@ const PantallaRegister = ({ navigation }) => {
 
             <TextInput
                 style={styles.input}
-                placeholder="Contraseña"
+                placeholder="PHONE"
+                value={phone}
+                onChangeText={setPhone}
+                keyboardType="phone-pad"
+            />
+
+            <TextInput
+                style={styles.input}
+                placeholder="ADDRESS"
+                value={address}
+                onChangeText={setAddress}
+            />
+
+            <TextInput
+                style={styles.input}
+                placeholder="PASSWORD"
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry={true}
-                autoCapitalize="none"
             />
 
             <View style={styles.switchContainer}>
-                <Text>¿Tienes patio?</Text>
+                <Text style={styles.switchText}>¿Tienes patio o área para mascotas?</Text>
                 <Switch
                     value={tienePatio}
                     onValueChange={setTienePatio}
+                    trackColor={{ false: "#767577", true: "#28a745" }}
                 />
             </View>
 
             <Button
                 title="Registrarse"
                 onPress={onRegisterPress}
-                color='#007bff'
+                color='#28a745'
             />
 
-            <Text style={{ textAlign: "center", marginTop: 15 }}>
-                ¿Ya tienes cuenta?
-            </Text>
-
-            <Button
-                title="Ir a login"
-                onPress={() => navigation.goBack()}
-            />
-        </View>
+            <View style={styles.footer}>
+                <Text>¿Ya tienes cuenta?</Text>
+                <Button
+                    title="Ir a login"
+                    onPress={() => navigation.goBack()}
+                    color="#6c757d"
+                />
+            </View>
+        </ScrollView>
     );
 }
 
 const styles = StyleSheet.create({
     contenedor: {
-        flex: 1,
-        padding: 20,
-        justifyContent: "center",
-        backgroundColor: '#f5f5f5'
+        padding: 25,
+        backgroundColor: '#ffffff',
+        flexGrow: 1,
+        justifyContent: "center"
     },
     titulo: {
-        fontSize: 24,
+        fontSize: 28,
         fontWeight: "bold",
-        marginBottom: 20,
+        marginBottom: 30,
         textAlign: "center",
         color: '#333'
     },
     input: {
         height: 50,
         borderWidth: 1,
-        borderColor: "#ccc",
-        borderRadius: 8,
+        borderColor: "#eee",
+        borderRadius: 10,
         paddingHorizontal: 15,
-        marginBottom: 15,
-        backgroundColor: '#ffffff',
-        fontSize: 16
+        marginBottom: 12,
+        backgroundColor: '#fafafa',
     },
     switchContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 20
+        marginVertical: 15,
+        paddingHorizontal: 5
+    },
+    switchText: {
+        fontSize: 14,
+        color: '#555',
+        flex: 1
+    },
+    footer: {
+        marginTop: 20,
+        gap: 10
     }
 });
 

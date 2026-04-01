@@ -1,8 +1,8 @@
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import React from 'react';
+import { Button, StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
 import { useLogin } from '../viewmodels/useLogin';
 
 const PantallaLogin = ({ navigation }) => {
-    //deconstruir nuestro hook
     const {
         email,
         setEmail,
@@ -12,51 +12,45 @@ const PantallaLogin = ({ navigation }) => {
     } = useLogin();
 
     const onLoginPress = async () => {
-        if(await handleLogin()){
+        const result = await handleLogin();
+        if (result.success) {
             navigation.replace("Pets");
-        } else {
-            console.log("error 404 we");
         }
     };
-    
-    return(
+
+    return (
         <View style={styles.contenedor}>
-            <Text style={styles.titulo}>Iniciar Sesion</Text>
+            <Text style={styles.tituloApp}>PetAdopt</Text>
 
             <TextInput
-            style={styles.input}
-            placeholder="Correo Electronico"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
+                style={styles.input}
+                placeholder="E-mail:"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
             />
 
             <TextInput
-            style={styles.input}
-            placeholder="Contraseña"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry={true}
-            autoCapitalize="none"
+                style={styles.input}
+                placeholder="Password:"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry={true}
+                autoCapitalize="none"
             />
 
             <Button
-            title="Iniciar sesion"
-            onPress={onLoginPress}
-            color='#28a745'
+                title="Iniciar sesión" 
+                onPress={onLoginPress}
+                color='#28a745'
             />
 
-            <Text>
-                ¿No tienes cuenta?
-            </Text>
-
-            <Button
-                title="Ir a registro"
-                onPress={() => navigation.navigate("Register")}
-                color="#007bff"
-            />
-
+            <View style={styles.footer}>
+                <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+                    <Text style={styles.link}>Create account</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 }
@@ -68,21 +62,31 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         backgroundColor: '#f5f5f5'
     },
-    titulo: {
-        fontSize: 24,
+    tituloApp: {
+        fontSize: 32,
         fontWeight: "bold",
-        marginBottom: 20,
+        marginBottom: 40,
         textAlign: "center",
-        color: '#333'
+        color: '#28a745'
     },
     input: {
         height: 50,
         borderColor: "#ccc",
+        borderWidth: 1,
         borderRadius: 8,
         paddingHorizontal: 15,
         marginBottom: 15,
         backgroundColor: '#ffffff',
-        fontSize: 16
+    },
+    footer: {
+        marginTop: 20,
+        alignItems: 'center'
+    },
+    link: {
+        color: '#007bff',
+        fontSize: 16,
+        textDecorationLine: 'underline'
     }
 });
+
 export default PantallaLogin;

@@ -3,67 +3,64 @@ import { Alert } from "react-native";
 import StorageService from "../helpers/StorageService";
 
 export const useRegister = () => {
-
     const [name, setName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
+    const [phone, setPhone] = useState('');
+    const [address, setAddress] = useState(''); 
     const [password, setPassword] = useState('');
     const [tienePatio, setTienePatio] = useState(false);
 
     const handleRegister = async () => {
-
-        if (name.trim() === '' || lastName.trim() === '') {
-            Alert.alert('Error', 'Nombre y apellido son obligatorios');
-            return;
+        // Validaciones básicas y Regex
+        if (!name.trim() || !lastName.trim() || !phone.trim() || !address.trim()) {
+            Alert.alert('Error', 'Todos los campos son obligatorios');
+            return false;
         }
 
         if (!StorageService.validate('email', email)) {
             Alert.alert('Error', 'Correo inválido');
-            console.log("error en correo");
-            
-            return;
+            return false;
         }
 
         if (!StorageService.validate('password', password)) {
             Alert.alert('Error', 'Contraseña inválida (mínimo 8 caracteres, mayúscula, número)');
-            console.log("error en contrra");
-            return;
+            return false;
         }
 
-        // MOCK REGISTER
-        const newUser = {
-            name,
-            lastName,
-            email,
-            tienePatio
-        };
+        try {
+            const newUser = {
+                id: `user_${Date.now()}`,
+                name,
+                lastName,
+                phone,
+                address,
+                email,
+                tienePatio,
+                isAdmin: false
+            };
 
-        // Guardar usuario en AsyncStorage
-        await StorageService.setItem('user', newUser);
+            await StorageService.setItem('userData', newUser);
+            
+            await StorageService.saveToken('userToken', 'mock-jwt-token-from-register');
 
-        //prueba para saber si guarda en ASYNCSTORAGE
-        //const savedUser = await StorageService.getItem('user');
-        //console.log("Usuario guardado:", savedUser);
+            Alert.alert('Success', 'Cuenta creada con éxito');
+            return true;
 
-        Alert.alert('Success', 'Usuario registrado correctamente');
-        setName('');
-        setLastName('');
-        setEmail('');
-        setPassword('');
-        setTienePatio(false);
+        } catch (error) {
+            console.log("Error en registro:", error);
+            return false;
+        }
     };
 
     return {
-        name,
-        setName,
-        lastName,
-        setLastName,
-        email,
-        setEmail,
-        password,
-        setPassword,
-        tienePatio,
-        setTienePatio,
+        name, setName,
+        lastName, setLastName,
+        email, setEmail,
+        phone, setPhone,
+        address, setAddress,
+        password, setPassword,
+        tienePatio, setTienePatio,
         handleRegister
     };
 };

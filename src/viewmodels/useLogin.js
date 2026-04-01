@@ -7,36 +7,34 @@ export const useLogin = () => {
     const [password, setPassword] = useState('');
 
     const handleLogin = async () => {
-    if (!StorageService.validate('email', email)) {
-        Alert.alert('Error', 'Correo inválido');
-        console.log("error en correo");
-        return false;
-    }
+        if (!StorageService.validate('email', email)) {
+            Alert.alert('Error', 'Correo inválido');
+            return { success: false };
+        }
 
-    if (!StorageService.validate('password', password)) {
-        Alert.alert('Error', 'Contraseña inválida (mínimo 8 caracteres, mayúscula, número)');
-        console.log("error en contra");
-        return false;
-    }
+        if (!StorageService.validate('password', password)) {
+            Alert.alert('Error', 'Contraseña inválida');
+            return { success: false };
+        }
 
-    try {
-        // MOCK LOGIN
-        const fakeToken = "abc123TOKEN";
+        try {
+            const fakeToken = "abc123TOKEN";
+            const user = {
+                id: "user_001",
+                email: email,
+                isAdmin: email === "admin@test.com"
+            };
 
-        await StorageService.saveToken('userToken', fakeToken);
+            await StorageService.saveToken('userToken', fakeToken);
+            await StorageService.setItem('userData', user);
 
-        Alert.alert('Success', 'Login exitoso');
-        console.log("LOGIN EXITOSO");
+            return { success: true};
 
-        setEmail('');
-        setPassword('');
-
-        return true; // 👈 CLAVE
-    } catch (error) {
-        console.log("Error en login:", error);
-        return false;
-    }
-};
+        } catch (error) {
+            console.log("Error en login:", error);
+            return { success: false };
+        }
+    };
 
     return {
         email,

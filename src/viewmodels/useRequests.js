@@ -1,13 +1,43 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import StorageService from "../helpers/StorageService";
 
 export const useRequests = () => {
+    const [requests, setRequests] = useState([]);
 
-    const [requests, setRequests] = useState([
-        { id: "1", pet: "Rex", status: "pendiente" },
-        { id: "2", pet: "Michi", status: "aprobado" }
-    ]);
+    useEffect(() => {
+        cargarSolicitudes();
+    }, []);
+
+    const cargarSolicitudes = async () => {
+        try {
+            const data = await StorageService.getItem("requests");
+
+            if (data && data.length > 0) {
+                setRequests(data);
+            } else {
+                const mockRequests = [
+                    {
+                        id: "req_001",
+                        status: "En Revisión",
+                        motivo: "Tengo mucho espacio y amor para dar.",
+                        pet: { name: "Rex", especie: "Perro" }
+                    },
+                    {
+                        id: "req_002",
+                        status: "Aprobada",
+                        motivo: "Busco un compañero para mi gato.",
+                        pet: { name: "Michi", especie: "Gato" }
+                    }
+                ];
+                setRequests(mockRequests);
+            }
+        } catch (error) {
+            console.log("Error cargando solicitudes:", error);
+        }
+    };
 
     return {
-        requests
+        requests,
+        recargar: cargarSolicitudes
     };
 };

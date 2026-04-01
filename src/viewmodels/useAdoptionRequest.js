@@ -1,31 +1,55 @@
 import { useState } from "react";
 import { Alert } from "react-native";
+import StorageService from "../helpers/StorageService";
 
 export const useAdoptionRequest = () => {
-
     const [motivo, setMotivo] = useState('');
+    const [ingresos, setIngresos] = useState('');
+    const [tienePatio, setTienePatio] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const enviarSolicitud = (pet, navigation) => {
-
-        if (motivo.trim() === '') {
-            Alert.alert("Error", "El motivo es obligatorio");
+    const enviarSolicitud = async (pet, navigation) => {
+        if (motivo.trim() === '' || ingresos.trim() === '') {
+            Alert.alert("Error", "Por favor, completa todos los campos.");
             return;
         }
 
-        console.log({
-            petId: pet.id,
-            motivo
-        });
+        setIsSubmitting(true);
 
-        Alert.alert("Success", "Solicitud enviada 🐶");
+        try {
+            const userData = await StorageService.getItem('userData');
+            const userId = userData ? userData.id : "guest_001";
 
-        setMotivo('');
-        navigation.goBack();
+            const solicitud = {
+                userId,
+                petId: pet.id,
+                motivo,
+                ingresos: parseFloat(ingresos),
+                tienePatio
+            };
+
+            console.log("Enviando Solicitud Mock:", solicitud);
+
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
+            Alert.alert("¡Éxito!", `Tu solicitud para adoptar a ${pet.name} ha sido enviada al refugio.`);
+            
+            setMotivo('');
+            setIngresos('');
+            setTienePatio(false);
+            navigation.goBack();
+        } catch (error) {
+            Alert.alert("Error", "No se pudo enviar la solicitud.");
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return {
-        motivo,
-        setMotivo,
+        motivo, setMotivo,
+        ingresos, setIngresos,
+        tienePatio, setTienePatio,
+        isSubmitting,
         enviarSolicitud
     };
 };
