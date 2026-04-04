@@ -21,8 +21,8 @@ const AdminDashboardScreen = ({ navigation }) => {
                             <Text style={styles.petText}>Pet: {item.petId?.name}</Text>
                         </View>
                         <View style={styles.detailsRow}>
-                            <Text style={styles.detailText}>💰 Income: ${item.income}</Text>
-                            <Text style={styles.detailText}>🏡 Yard: {item.haveyard ? 'YES' : 'NO'}</Text>
+                            <Text style={styles.detailText}> income: ${item.income}</Text>
+                            <Text style={styles.detailText}> yard: {item.haveyard ? 'YES' : 'NO'}</Text>
                             <Text style={[styles.statusBadge, { color: item.status === 'pendiente' ? '#888' : '#000' }]}>
                                 Status: {item.status.toUpperCase()}
                             </Text>
