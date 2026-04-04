@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { Alert } from "react-native";
 import StorageService from "../helpers/StorageService";
+import { loginService } from "../services/AuthService";
+import { jwtDecode } from "jwt-decode";
 
 export const useLogin = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const handleLogin = async () => {
         if (!StorageService.validate('email', email)) {
@@ -17,22 +20,22 @@ export const useLogin = () => {
             return { success: false };
         }
 
+        setLoading(true);
+
         try {
-            const fakeToken = "abc123TOKEN";
-            const user = {
-                id: "user_001",
-                email: email,
-                isAdmin: email === "admin@test.com"
-            };
+            const resultado = await loginService(email, password);
 
-            await StorageService.saveToken('userToken', fakeToken);
-            await StorageService.setItem('userData', user);
-
-            return { success: true};
+            if (resultado && resultado.token) {
+                const decoded = jwtDecode(resultado.token);
+                const isAdmin = decoded.user?.isAdmin || false;
+                return { success: true, isAdmin: isAdmin };
+            }
 
         } catch (error) {
-            console.log("Error en login:", error);
+            Alert.alert("Error", error.message);
             return { success: false };
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -41,6 +44,7 @@ export const useLogin = () => {
         setEmail,
         password,
         setPassword,
+        loading,
         handleLogin
     };
 };

@@ -1,45 +1,36 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import StorageService from "../helpers/StorageService";
+import { getPetsService } from "../services/PetService";
+import { jwtDecode } from "jwt-decode";
 
 export const usePets = () => {
     const [pets, setPets] = useState([]);
     const [isAdmin, setIsAdmin] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        cargarDatos();
+        setLoading(true);
+        const cargarDatosIniciales = async () => {
+            try {
+                const token = await StorageService.getToken('userToken');
+
+                if (token) {
+                    const decoded = jwtDecode(token);
+                    setIsAdmin(decoded.user?.isAdmin || false);
+                }
+                const datosMascotas = await getPetsService();
+                setPets(datosMascotas);
+
+
+            } catch (error) {
+                console.log("Error al inicializar Pantalla Pets:", error.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        cargarDatosIniciales();
     }, []);
 
-    const cargarDatos = async () => {
-        const mockPets = [
-            {
-                id: "pet_001",
-                name: "Rex",
-                especie: "Perro (Golden)",
-                age: "2 años",
-                description: "Amigable y muy juguetón."
-            },
-            {
-                id: "pet_002",
-                name: "Michi",
-                especie: "Gato",
-                age: "6 meses",
-                description: "Tranquilo, busca un hogar cálido."
-            }
-        ];
-
-        setPets(mockPets);
-        try {
-            const userData = await StorageService.getItem("userData");
-            if (userData) {
-                setIsAdmin(userData.isAdmin);
-            }
-        } catch (error) {
-            console.log("Error leyendo usuario:", error);
-        }
-    };
-
-    return {
-        pets,
-        isAdmin
-    };
+    return { pets, isAdmin, loading};
 };

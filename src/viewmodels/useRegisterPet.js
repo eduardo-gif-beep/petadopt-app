@@ -1,51 +1,39 @@
 import { useState } from "react";
 import { Alert } from "react-native";
+import { registerPet } from "../services/AdminService";
 
-export const useRegisterPet = () => {
-    const [name, setName] = useState('');
-    const [especie, setEspecie] = useState('');
-    const [age, setAge] = useState('');
-    const [description, setDescription] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
+export const useAdminPet = (navigation) => {
+    const [form, setForm] = useState({
+        name: '',
+        dogbreed: '',
+        age: '',
+        gender: 'Macho',
+        size: 'Grande',
+        color: '',
+        description: '',
+        imageUrl: '',
+        healtStatus: 'Vacunado'
+    });
+    const [loading, setLoading] = useState(false);
 
-    const handleRegisterPet = async (navigation) => {
-        // Validaciones básicas según el contrato
-        if (!name || !especie || !age || !description) {
-            Alert.alert("Error", "Todos los campos son obligatorios para el registro.");
+    const handleSave = async () => {
+        if (!form.name || !form.dogbreed || !form.color) {
+            Alert.alert("Atención", "Nombre, Raza y Color son obligatorios");
             return;
         }
 
-        setIsLoading(true);
-
+        setLoading(true);
         try {
-            const newPet = {
-                id: `pet_${Date.now()}`,
-                name,
-                especie,
-                age,
-                description
-            };
-
-            console.log("Mascota registrada con éxito:", newPet);
-
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
-            Alert.alert("Éxito", "La mascota ha sido añadida al catálogo.");
-
-            navigation.goBack();
+            await registerPet(form);
+            Alert.alert("¡Éxito!", "Mascota registrada correctamente", [
+                { text: "OK", onPress: () => navigation.goBack() }
+            ]);
         } catch (error) {
-            Alert.alert("Error", "No se pudo registrar la mascota.");
+            Alert.alert("Error", error.message);
         } finally {
-            setIsLoading(false);
+            setLoading(false);
         }
     };
 
-    return {
-        name, setName,
-        especie, setEspecie,
-        age, setAge,
-        description, setDescription,
-        isLoading,
-        handleRegisterPet
-    };
+    return { form, setForm, loading, handleSave };
 };

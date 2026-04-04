@@ -2,19 +2,26 @@ import React from 'react';
 import { Button, StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
 import { useLogin } from '../viewmodels/useLogin';
 
+
 const PantallaLogin = ({ navigation }) => {
     const {
         email,
         setEmail,
         password,
         setPassword,
+        loading,
         handleLogin
     } = useLogin();
 
     const onLoginPress = async () => {
-        const result = await handleLogin();
-        if (result.success) {
+        const result = await handleLogin(navigation);
+
+        if (result && result.success) {
+            if (result.isAdmin === true) {
+            navigation.replace("Admin"); 
+        } else {
             navigation.replace("Pets");
+        }
         }
     };
 
@@ -29,6 +36,7 @@ const PantallaLogin = ({ navigation }) => {
                 onChangeText={setEmail}
                 keyboardType="email-address"
                 autoCapitalize="none"
+                editable={!loading}
             />
 
             <TextInput
@@ -38,12 +46,13 @@ const PantallaLogin = ({ navigation }) => {
                 onChangeText={setPassword}
                 secureTextEntry={true}
                 autoCapitalize="none"
+                editable={!loading}
             />
 
             <Button
-                title="Iniciar sesión" 
+                title="Iniciar sesión"
                 onPress={onLoginPress}
-                color='#28a745'
+                color='#8f8f8f'
             />
 
             <View style={styles.footer}>
@@ -58,33 +67,48 @@ const PantallaLogin = ({ navigation }) => {
 const styles = StyleSheet.create({
     contenedor: {
         flex: 1,
-        padding: 20,
+        padding: 40,
         justifyContent: "center",
-        backgroundColor: '#f5f5f5'
+        backgroundColor: '#FFFFFF'
     },
     tituloApp: {
-        fontSize: 32,
-        fontWeight: "bold",
+        fontSize: 24,
+        fontWeight: "700",
         marginBottom: 40,
         textAlign: "center",
-        color: '#28a745'
+        color: '#000',
+        letterSpacing: 2,
+        textTransform: 'uppercase'
     },
     input: {
-        height: 50,
-        borderColor: "#ccc",
+        height: 45,
+        borderColor: "#000",
         borderWidth: 1,
-        borderRadius: 8,
-        paddingHorizontal: 15,
+        borderRadius: 2, 
+        paddingHorizontal: 12,
         marginBottom: 15,
-        backgroundColor: '#ffffff',
+        backgroundColor: '#FFF',
+        fontSize: 14
+    },
+    btnPrincipal: {
+        backgroundColor: '#000',
+        paddingVertical: 12,
+        borderRadius: 2,
+        alignItems: 'center'
+    },
+    btnTexto: {
+        color: '#FFF',
+        fontWeight: 'bold',
+        textTransform: 'uppercase',
+        fontSize: 13
     },
     footer: {
-        marginTop: 20,
+        marginTop: 30,
         alignItems: 'center'
     },
     link: {
-        color: '#007bff',
-        fontSize: 16,
+        color: '#666',
+        fontSize: 13,
         textDecorationLine: 'underline'
     }
 });

@@ -1,123 +1,126 @@
 import React from 'react';
-import { View, Text, TextInput, Button, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
-import { useRegisterPet } from '../viewmodels/useRegisterPet';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import { useAdminPet } from '../viewmodels/useRegisterPet';
 
-const PantallaRegisterPet = ({ navigation }) => {
-    const {
-        name, setName,
-        especie, setEspecie,
-        age, setAge,
-        description, setDescription,
-        isLoading,
-        handleRegisterPet
-    } = useRegisterPet();
+const AdminRegisterPetScreen = ({ navigation }) => {
+    const { form, setForm, loading, handleSave } = useAdminPet(navigation);
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
-            <Text style={styles.titulo}>Registrar Nueva Mascota</Text>
-            <Text style={styles.subtitulo}>Panel de Administración</Text>
+        <ScrollView style={styles.container}>
+            <View style={styles.card}>
+                <Text style={styles.title}>Register New Pet</Text>
 
-            <View style={styles.form}>
-                <Text style={styles.label}>Nombre de la mascota:</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Ej. Bobby"
-                    value={name}
-                    onChangeText={setName}
-                />
+                <Text style={styles.label}>Nombre:</Text>
+                <TextInput style={styles.input} value={form.name} onChangeText={(v) => setForm({ ...form, name: v })} />
 
-                <Text style={styles.label}>Especie:</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Ej. Perro (Labrador)"
-                    value={especie}
-                    onChangeText={setEspecie}
-                />
-
-                <Text style={styles.label}>Edad:</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Ej. 3 años o 2 meses"
-                    value={age}
-                    onChangeText={setAge}
-                />
-
-                <Text style={styles.label}>Descripción detallada:</Text>
-                <TextInput
-                    style={[styles.input, styles.textArea]}
-                    placeholder="Describe su personalidad y salud..."
-                    value={description}
-                    onChangeText={setDescription}
-                    multiline
-                    numberOfLines={5}
-                />
-
-                {isLoading ? (
-                    <ActivityIndicator size="large" color="#28a745" />
-                ) : (
-                    <View style={styles.buttonContainer}>
-                        <Button 
-                            title="GUARDAR MASCOTA" 
-                            onPress={() => handleRegisterPet(navigation)}
-                            color="#28a745"
-                        />
-                        <View style={{ height: 10 }} />
-                        <Button 
-                            title="CANCELAR" 
-                            onPress={() => navigation.goBack()}
-                            color="#dc3545"
-                        />
+                <View style={styles.row}>
+                    <View style={{ flex: 1, marginRight: 10 }}>
+                        <Text style={styles.label}>Raza:</Text>
+                        <TextInput style={styles.input} value={form.dogbreed} onChangeText={(v) => setForm({ ...form, dogbreed: v })} />
                     </View>
-                )}
+                    <View style={{ flex: 1 }}>
+                        <Text style={styles.label}>Color:</Text>
+                        <TextInput style={styles.input} value={form.color} onChangeText={(v) => setForm({ ...form, color: v })} />
+                    </View>
+                </View>
+
+                <View style={styles.row}>
+                    <View style={{ flex: 1, marginRight: 10 }}>
+                        <Text style={styles.label}>Tamaño:</Text>
+                        <TextInput style={styles.input} value={form.size} placeholder="Grande/Mediano" onChangeText={(v) => setForm({ ...form, size: v })} />
+                    </View>
+                    <View style={{ flex: 1 }}>
+                        <Text style={styles.label}>Estado Salud:</Text>
+                        <TextInput style={styles.input} value={form.healtStatus} onChangeText={(v) => setForm({ ...form, healtStatus: v })} />
+                    </View>
+                </View>
+
+                <View style={styles.row}>
+                    <View style={{ flex: 1, marginRight: 10 }}>
+                        <Text style={styles.label}>Age (e.g. 2 years):</Text>
+                        <TextInput style={styles.input} value={form.age} onChangeText={(v) => setForm({ ...form, age: v })} />
+                    </View>
+                    <View style={{ flex: 1 }}>
+                        <Text style={styles.label}>Gender:</Text>
+                        <TextInput style={styles.input} value={form.gender} onChangeText={(v) => setForm({ ...form, gender: v })} />
+                    </View>
+                </View>
+
+                <Text style={styles.label}>Image URL:</Text>
+                <TextInput style={styles.input} value={form.imageUrl} placeholder="https://..." onChangeText={(v) => setForm({ ...form, imageUrl: v })} />
+
+                <Text style={styles.label}>Description:</Text>
+                <TextInput
+                    style={[styles.input, { height: 80 }]}
+                    multiline
+                    value={form.description}
+                    onChangeText={(v) => setForm({ ...form, description: v })}
+                />
+
+                <TouchableOpacity style={styles.btnSave} onPress={handleSave} disabled={loading}>
+                    {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.btnText}>Save Pet</Text>}
+                </TouchableOpacity>
             </View>
         </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        padding: 25,
-        backgroundColor: '#fff',
-        flexGrow: 1
+    container: { 
+        flex: 1, 
+        backgroundColor: '#FFFFFF',
+        paddingHorizontal: 20 
     },
-    titulo: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        color: '#333'
+    card: { 
+        backgroundColor: '#FFFFFF', 
+        paddingVertical: 20, 
+        marginTop: 10 
     },
-    subtitulo: {
-        fontSize: 14,
-        textAlign: 'center',
-        color: '#28a745',
-        marginBottom: 30,
-        fontWeight: '600'
+    title: { 
+        fontSize: 18, 
+        fontWeight: '700', 
+        marginBottom: 25, 
+        textAlign: 'left',
+        color: '#000',
+        textTransform: 'uppercase',
+        letterSpacing: 1
     },
-    form: {
-        width: '100%'
-    },
-    label: {
-        fontSize: 14,
-        fontWeight: 'bold',
+    label: { 
+        fontSize: 11,
+        fontWeight: '700', 
+        marginTop: 15, 
         marginBottom: 5,
-        color: '#555'
+        color: '#666',
+        textTransform: 'uppercase'
     },
-    input: {
+    input: { 
+        borderWidth: 1, 
+        borderColor: '#000', 
+        borderRadius: 2, 
+        padding: 10,
+        fontSize: 14,
+        backgroundColor: '#FFF'
+    },
+    row: { 
+        flexDirection: 'row',
+        marginTop: 5
+    },
+    btnSave: { 
+        backgroundColor: '#000', 
+        padding: 15, 
+        borderRadius: 2, 
+        alignItems: 'center', 
+        marginTop: 35,
         borderWidth: 1,
-        borderColor: '#ddd',
-        borderRadius: 8,
-        padding: 12,
-        marginBottom: 20,
-        backgroundColor: '#f9f9f9',
-        fontSize: 16
+        borderColor: '#000'
     },
-    textArea: {
-        height: 120,
-        textAlignVertical: 'top'
-    },
-    buttonContainer: {
-        marginTop: 10
+    btnText: { 
+        color: '#FFF',
+        fontWeight: '700', 
+        fontSize: 14,
+        textTransform: 'uppercase',
+        letterSpacing: 1
     }
 });
 
-export default PantallaRegisterPet;
+export default AdminRegisterPetScreen;

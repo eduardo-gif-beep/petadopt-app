@@ -1,19 +1,21 @@
 import { useState } from "react";
 import { Alert } from "react-native";
 import StorageService from "../helpers/StorageService";
+import { registerService } from "../services/AuthService";
 
 export const useRegister = () => {
     const [name, setName] = useState('');
     const [lastName, setLastName] = useState('');
+    const [age, setAge] = useState('');
     const [email, setEmail] = useState('');
-    const [phone, setPhone] = useState('');
-    const [address, setAddress] = useState(''); 
+    const [income, setIncome] = useState('');
     const [password, setPassword] = useState('');
     const [tienePatio, setTienePatio] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const handleRegister = async () => {
         // Validaciones básicas y Regex
-        if (!name.trim() || !lastName.trim() || !phone.trim() || !address.trim()) {
+        if (!name.trim() || !lastName.trim() || !age.trim() || !income.trim()) {
             Alert.alert('Error', 'Todos los campos son obligatorios');
             return false;
         }
@@ -28,39 +30,30 @@ export const useRegister = () => {
             return false;
         }
 
+        setLoading(true);
+
         try {
-            const newUser = {
-                id: `user_${Date.now()}`,
-                name,
-                lastName,
-                phone,
-                address,
-                email,
-                tienePatio,
-                isAdmin: false
-            };
+            const respuesta = await registerService({
+                name, lastName, age, income, email, password, tienePatio
+            });
 
-            await StorageService.setItem('userData', newUser);
-            
-            await StorageService.saveToken('userToken', 'mock-jwt-token-from-register');
-
-            Alert.alert('Success', 'Cuenta creada con éxito');
-            return true;
-
+            Alert.alert("Éxito", respuesta.msg);
+            navigation.navigate("Login");
         } catch (error) {
-            console.log("Error en registro:", error);
-            return false;
+            Alert.alert("Error de Registro", error.message);
+        } finally {
+            setLoading(false);
         }
     };
 
     return {
         name, setName,
         lastName, setLastName,
+        age, setAge,
+        income, setIncome,
         email, setEmail,
-        phone, setPhone,
-        address, setAddress,
         password, setPassword,
         tienePatio, setTienePatio,
-        handleRegister
+        loading, handleRegister
     };
 };

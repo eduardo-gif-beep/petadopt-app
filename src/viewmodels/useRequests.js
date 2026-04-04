@@ -1,43 +1,30 @@
-import { useEffect, useState } from "react";
-import StorageService from "../helpers/StorageService";
+import { useState, useEffect } from "react";
+import { getMyRequests } from "../services/AdoptionService";
 
-export const useRequests = () => {
+export const useRecentRequests = () => {
     const [requests, setRequests] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
 
-    useEffect(() => {
-        cargarSolicitudes();
-    }, []);
-
-    const cargarSolicitudes = async () => {
+    const fetchRequests = async () => {
         try {
-            const data = await StorageService.getItem("requests");
-
-            if (data && data.length > 0) {
-                setRequests(data);
-            } else {
-                const mockRequests = [
-                    {
-                        id: "req_001",
-                        status: "En Revisión",
-                        motivo: "Tengo mucho espacio y amor para dar.",
-                        pet: { name: "Rex", especie: "Perro" }
-                    },
-                    {
-                        id: "req_002",
-                        status: "Aprobada",
-                        motivo: "Busco un compañero para mi gato.",
-                        pet: { name: "Michi", especie: "Gato" }
-                    }
-                ];
-                setRequests(mockRequests);
-            }
+            const data = await getMyRequests();
+            setRequests(data);
         } catch (error) {
-            console.log("Error cargando solicitudes:", error);
+            console.log(error.message);
+        } finally {
+            setLoading(false);
+            setRefreshing(false);
         }
     };
 
-    return {
-        requests,
-        recargar: cargarSolicitudes
+    useEffect(() => {
+        fetchRequests();
+    }, []);
+
+    const onRefresh = () => {
+        setRefreshing(true);
+        fetchRequests();
     };
+    return { requests, loading, refreshing, onRefresh};
 };

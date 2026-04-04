@@ -1,114 +1,171 @@
 import React from 'react';
-import { Button, FlatList, StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import { useAdminPets } from "../viewmodels/useAdminPets";
+import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useAdminRequests } from '../viewmodels/useAdminPets';
 
-const PantallaAdminPets = ({ navigation }) => {
-    const { pets, cargarPets } = useAdminPets();
+const AdminDashboardScreen = ({ navigation }) => {
+    const { requests, loading, handleStatusUpdate } = useAdminRequests();
+
+    if (loading) return <ActivityIndicator size="large" color="#000" style={{ flex: 1 }} />;
 
     return (
-        <View style={styles.contenedor}>
-            <Text style={styles.titulo}>Pets Management (Admin)</Text>
-
-            <View style={styles.headerButtons}>
-                <Button 
-                    title="Añadir Mascota" 
-                    onPress={() => navigation.navigate("RegisterPet")} 
-                    color="#28a745"
-                />
-            </View>
+        <View style={styles.container}>
+            <Text style={styles.title}>Admin Panel: Adoptions</Text>
 
             <FlatList
-                data={pets}
-                keyExtractor={(item) => item.id}
+                data={requests}
+                keyExtractor={(item) => item._id}
                 renderItem={({ item }) => (
-                    <View style={styles.tarjeta}>
-                        <Text style={styles.idText}>ID: {item.id}</Text>
-                        <Text style={styles.info}><Text style={styles.bold}>Name:</Text> {item.name}</Text>
-                        <Text style={styles.info}><Text style={styles.bold}>Especie:</Text> {item.especie}</Text>
-                        <Text style={styles.info}><Text style={styles.bold}>Age:</Text> {item.age}</Text>
-                        <Text style={styles.info}><Text style={styles.bold}>Description:</Text> {item.description}</Text>
-                        
-                        <View style={styles.acciones}>
-                            <TouchableOpacity style={styles.btnEditar}>
-                                <Text style={styles.btnText}>EDIT</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={styles.btnEliminar}>
-                                <Text style={styles.btnText}>DELETE</Text>
-                            </TouchableOpacity>
+                    <View style={styles.requestCard}>
+                        <View style={styles.infoRow}>
+                            <Text style={styles.userText}>User: {item.userId?.name || 'Unknown'}</Text>
+                            <Text style={styles.petText}>Pet: {item.petId?.name}</Text>
                         </View>
+                        <View style={styles.detailsRow}>
+                            <Text style={styles.detailText}>💰 Income: ${item.income}</Text>
+                            <Text style={styles.detailText}>🏡 Yard: {item.haveyard ? 'YES' : 'NO'}</Text>
+                            <Text style={[styles.statusBadge, { color: item.status === 'pendiente' ? '#888' : '#000' }]}>
+                                Status: {item.status.toUpperCase()}
+                            </Text>
+                        </View>
+
+                        <Text style={styles.motiveText}>Motive: {item.motive}</Text>
+
+                        {item.status === 'pendiente' ? (
+                            <View style={styles.actionRow}>
+                                <TouchableOpacity
+                                    style={[styles.btn, styles.btnApprove]}
+                                    onPress={() => handleStatusUpdate(item._id, 'aprobado')}
+                                >
+                                    <Text style={styles.btnText}>Approve</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity
+                                    style={[styles.btn, styles.btnReject]}
+                                    onPress={() => handleStatusUpdate(item._id, 'rechazado')}
+                                >
+                                    <Text style={[styles.btnText, styles.btnTextSecondary]}>Reject</Text>
+                                </TouchableOpacity>
+                            </View>
+                        ) : (
+                            <Text style={styles.completedText}>Decision already registered</Text>
+                        )}
                     </View>
                 )}
             />
 
-            <View style={styles.footer}>
-                <Button title="Recargar" onPress={cargarPets} color="#6c757d" />
-                <Button title="Volver al Home" onPress={() => navigation.goBack()} />
+            <View style={styles.navBar}>
+                <TouchableOpacity onPress={() => navigation.navigate("RegisterPet")}>
+                    <Text style={styles.navText}>Register New Pet</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate("Pets")}>
+                    <Text style={styles.navText}>Home</Text>
+                </TouchableOpacity>
             </View>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    contenedor: {
-        flex: 1,
-        padding: 20,
-        backgroundColor: '#f8f9fa'
+    container: { 
+        flex: 1, 
+        backgroundColor: '#FFF', 
+        paddingHorizontal: 20, 
+        paddingTop: 50 
     },
-    titulo: {
-        fontSize: 22,
-        fontWeight: "bold",
-        marginBottom: 20,
-        textAlign: "center"
+    title: { 
+        fontSize: 18, 
+        fontWeight: '400', 
+        marginBottom: 30, 
+        color: '#525151',
+        textTransform: 'uppercase',
+        letterSpacing: 1
     },
-    headerButtons: {
-        marginBottom: 15
+    requestCard: { 
+        paddingVertical: 15, 
+        borderBottomWidth: 1, 
+        borderColor: '#EEE', 
+        marginBottom: 10
     },
-    tarjeta: {
-        backgroundColor: '#fff',
-        padding: 15,
-        borderRadius: 10,
+    infoRow: { 
+        flexDirection: 'row', 
+        justifyContent: 'space-between', 
+        marginBottom: 4 
+    },
+    detailsRow: {
+        flexDirection: 'row',
+        gap: 15,
+        marginBottom: 8
+    },
+    detailText: {
+        fontSize: 11,
+        color: '#555',
+        fontWeight: '500'
+    },
+    statusBadge: {
+        fontSize: 10,
+        fontWeight: 'bold',
+        marginLeft: 'auto'
+    },
+    userText: { 
+        fontSize: 14, 
+        color: '#696969',
+        fontWeight: '600'
+    },
+    petText: { 
+        fontSize: 14, 
+        color: '#888' 
+    },
+    motiveText: { 
+        fontSize: 12, 
+        color: '#AAA', 
         marginBottom: 15,
-        borderWidth: 1,
-        borderColor: '#ddd',
-        elevation: 3
+        fontStyle: 'italic'
     },
-    idText: {
-        fontSize: 12,
-        color: '#888',
-        marginBottom: 5
+    actionRow: { 
+        flexDirection: 'row', 
+        gap: 10 
     },
-    bold: {
+    btn: { 
+        paddingVertical: 6, 
+        paddingHorizontal: 12, 
+        borderWidth: 1, 
+        borderColor: '#979797', 
+        borderRadius: 2 
+    },
+    btnApprove: { 
+        backgroundColor: '#a9a9a9' 
+    },
+    btnReject: { 
+        backgroundColor: '#FFF' 
+    },
+    btnText: { 
+        fontSize: 11, 
+        color: '#FFF',
+        textTransform: 'uppercase',
         fontWeight: 'bold'
     },
-    info: {
-        fontSize: 15,
-        marginBottom: 2
+    btnTextSecondary: {
+        color: '#000'
     },
-    acciones: {
+    completedText: {
+        fontSize: 10,
+        color: '#BBB',
+        textTransform: 'uppercase',
+        letterSpacing: 0.5
+    },
+    navBar: {
         flexDirection: 'row',
-        justifyContent: 'flex-end',
-        marginTop: 10,
-        gap: 10
+        justifyContent: 'space-between',
+        paddingVertical: 20,
+        borderTopWidth: 1,
+        borderColor: '#a5a5a5',
+        marginTop: 10 
     },
-    btnEditar: {
-        backgroundColor: '#ffc107',
-        padding: 8,
-        borderRadius: 5
-    },
-    btnEliminar: {
-        backgroundColor: '#dc3545',
-        padding: 8,
-        borderRadius: 5
-    },
-    btnText: {
-        color: 'white',
-        fontWeight: 'bold',
-        fontSize: 12
-    },
-    footer: {
-        marginTop: 10,
-        gap: 10
+    navText: {
+        color: '#8b8b8b',
+        fontSize: 12,
+        fontWeight: 'bold'
     }
 });
 
-export default PantallaAdminPets;
+export default AdminDashboardScreen;
