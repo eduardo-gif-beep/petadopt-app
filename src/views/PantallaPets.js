@@ -1,9 +1,16 @@
-import React from 'react';
+import React, { useCallback } from 'react'; // 1. Importa useCallback
 import { FlatList, StyleSheet, Text, View, TouchableOpacity, ActivityIndicator, RefreshControl, Image } from "react-native";
+import { useFocusEffect } from '@react-navigation/native'; // 2. Importa useFocusEffect
 import { usePets } from "../viewmodels/usePets";
 
 const PantallaPets = ({ navigation }) => {
     const { pets, isAdmin, loading, refrescar } = usePets();
+
+    useFocusEffect(
+        useCallback(() => {
+            refrescar(); 
+        }, [])
+    );
 
     return (
         <View style={styles.container}>
@@ -70,12 +77,12 @@ const PantallaPets = ({ navigation }) => {
             )}
 
             <View style={styles.navBar}>
-
                 {!isAdmin && (
                     <TouchableOpacity onPress={() => navigation.navigate("Requests")}>
                         <Text style={styles.navText}>My Requests</Text>
                     </TouchableOpacity>
                 )}
+                
                 <TouchableOpacity style={styles.footerBtn} onPress={() => navigation.navigate("Profile")}>
                     <Text>Profile</Text>
                 </TouchableOpacity>

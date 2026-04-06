@@ -5,13 +5,20 @@ import { useRecentRequests } from '../viewmodels/useRequests';
 const RecentRequestsScreen = () => {
     const { requests, loading, refreshing, onRefresh, formatDate } = useRecentRequests();
 
-    const getStatusStyle = (status) => {
-        switch (status.toLowerCase()) {
-            case 'aprobado': return styles.statusApproved;
-            case 'rechazado': return styles.statusRejected;
-            default: return styles.statusPending;
-        }
-    };
+const getStatusStyle = (status) => {
+    const currentStatus = status ? status.toLowerCase().trim() : '';
+
+    switch (currentStatus) {
+        case 'aprobado': 
+            return styles.statusApproved;
+        case 'rechazado': 
+            return styles.statusRejected;
+        case 'pendiente': 
+            return styles.statusPending;
+        default: 
+            return styles.statusPending;
+    }
+};
 
     if (loading) return <ActivityIndicator size="large" style={{ flex: 1 }} color="#2ecc71" />;
 

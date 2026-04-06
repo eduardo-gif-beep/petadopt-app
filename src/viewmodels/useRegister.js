@@ -36,11 +36,12 @@ export const useRegister = () => {
             const respuesta = await registerService({
                 name, lastName, age, income, email, password, tienePatio
             });
-
             Alert.alert("Éxito", respuesta.msg);
-            navigation.navigate("Login");
+            return { success: true};
+
         } catch (error) {
             Alert.alert("Error de Registro", error.message);
+            return { success: false};
         } finally {
             setLoading(false);
         }

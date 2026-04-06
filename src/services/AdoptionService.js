@@ -3,7 +3,6 @@ import StorageService from '../helpers/StorageService';
 
 export const sendAdoptionRequest = async (adoptionData) => {
     try {
-        console.log("LOG: Enviando a la API ->", JSON.stringify(adoptionData));
         const response = await api.post('/adoptions/request', adoptionData);
         return response.data; 
     } catch (error) {

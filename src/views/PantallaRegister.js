@@ -15,8 +15,8 @@ const PantallaRegister = ({ navigation }) => {
     } = useRegister();
 
     const onRegisterPress = async () => {
-        const success = await handleRegister();
-        if (success) {
+        const result = await handleRegister(navigation);
+        if (result.success) {
             navigation.replace("Login");
         }
     };
