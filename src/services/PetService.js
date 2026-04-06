@@ -22,3 +22,12 @@ export const getPetsService = async () => {
         throw new Error("No se pudieron cargar las mascotas");
     }
 };
+
+export const deletePetService = async (id) => {
+    try {
+        const response = await api.delete(`/pets/admin/delete/${id}`);
+        return response.data;
+    } catch (error) {
+        throw error.response ? error.response.data : new Error("Error al eliminar");
+    }
+};

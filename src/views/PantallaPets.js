@@ -4,11 +4,11 @@ import { useFocusEffect } from '@react-navigation/native'; // 2. Importa useFocu
 import { usePets } from "../viewmodels/usePets";
 
 const PantallaPets = ({ navigation }) => {
-    const { pets, isAdmin, loading, refrescar } = usePets();
+    const { pets, isAdmin, loading, refrescar, eliminarMascota } = usePets();
 
     useFocusEffect(
         useCallback(() => {
-            refrescar(); 
+            refrescar();
         }, [])
     );
 
@@ -65,11 +65,20 @@ const PantallaPets = ({ navigation }) => {
                                 <Text style={styles.status}>{item.status}</Text>
 
                                 <TouchableOpacity
-                                    style={styles.btnView}
+                                    style={[styles.btnView, isAdmin && { flex: 1, marginRight: 8 }]} // Ajuste de ancho si hay dos botones
                                     onPress={() => navigation.navigate("Request", { pet: item })}
                                 >
                                     <Text style={styles.btnText}>VIEW / ADOPT</Text>
                                 </TouchableOpacity>
+
+                                {isAdmin && (
+                                    <TouchableOpacity
+                                        style={styles.btnDelete}
+                                        onPress={() => eliminarMascota(item.id)} // Usamos la función del viewmodel
+                                    >
+                                        <Text style={styles.btnDeleteText}>DELETE</Text>
+                                    </TouchableOpacity>
+                                )}
                             </View>
                         </View>
                     )}
@@ -82,7 +91,7 @@ const PantallaPets = ({ navigation }) => {
                         <Text style={styles.navText}>My Requests</Text>
                     </TouchableOpacity>
                 )}
-                
+
                 <TouchableOpacity style={styles.footerBtn} onPress={() => navigation.navigate("Profile")}>
                     <Text>Profile</Text>
                 </TouchableOpacity>
@@ -235,6 +244,32 @@ const styles = StyleSheet.create({
         marginTop: 50,
         color: '#999',
         fontSize: 14
-    }
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        width: '100%',
+        marginTop: 10,
+    },
+    btnView: {
+        flex: 1,
+        paddingVertical: 10,
+        borderWidth: 1,
+        borderColor: '#000',
+        borderRadius: 2,
+        alignItems: 'center'
+    },
+    btnDelete: {
+        width: 80, // Ancho fijo para el botón de borrar
+        paddingVertical: 10,
+        backgroundColor: '#ff4444',
+        borderRadius: 2,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    btnDeleteText: {
+        fontSize: 10,
+        fontWeight: 'bold',
+        color: '#fff',
+    },
 });
 export default PantallaPets;

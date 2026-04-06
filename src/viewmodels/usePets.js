@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from "react"; // Añadimos useCallback
+import { useState, useEffect } from "react";
 import StorageService from "../helpers/StorageService";
-import { getPetsService } from "../services/PetService";
+import { getPetsService, deletePetService } from "../services/PetService"; // Importar el nuevo servicio
 import { jwtDecode } from "jwt-decode";
+import { Alert } from "react-native";
 
 export const usePets = () => {
     const [pets, setPets] = useState([]);
@@ -16,15 +17,35 @@ export const usePets = () => {
                 const decoded = jwtDecode(token);
                 setIsAdmin(decoded.user?.isAdmin || false);
             }
-
             const datosMascotas = await getPetsService();
             setPets(datosMascotas);
-
         } catch (error) {
             console.log("Error al refrescar Pantalla Pets:", error.message);
         } finally {
             setLoading(false);
         }
+    };
+
+    const eliminarMascota = async (id) => {
+        Alert.alert(
+            "Eliminar Mascota",
+            "¿Estás seguro de que deseas eliminar permanentemente esta mascota?",
+            [
+                { text: "Cancelar", style: "cancel" },
+                { 
+                    text: "Eliminar", 
+                    style: "destructive", 
+                    onPress: async () => {
+                        try {
+                            await deletePetService(id);
+                            await refrescar();
+                        } catch (error) {
+                            Alert.alert("Error", error.msg || "No se pudo eliminar");
+                        }
+                    } 
+                }
+            ]
+        );
     };
 
     useEffect(() => {
@@ -35,6 +56,7 @@ export const usePets = () => {
         pets, 
         isAdmin, 
         loading, 
-        refrescar
+        refrescar,
+        eliminarMascota // <--- Exponemos la función
     };
 };
