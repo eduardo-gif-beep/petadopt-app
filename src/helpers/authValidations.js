@@ -1,5 +1,5 @@
 import { Alert } from 'react-native';
-import { StorageService } from "./StorageService";
+import StorageService from '../helpers/StorageService';
 
 export const validateRegisterForm = (data) => {
     const { name, lastName, age, income, email, password, confirmPassword } = data;
