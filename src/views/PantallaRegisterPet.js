@@ -71,6 +71,14 @@ const AdminRegisterPetScreen = ({ navigation }) => {
                         placeholder="Golden Retriever, Husky..."
                     />
 
+                    <Text style={styles.label}>Color</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={form.color}
+                        onChangeText={(v) => setForm({ ...form, color: v })}
+                        placeholder="Golden Retriever, Husky..."
+                    />
+
                     <Text style={styles.label}>AGE</Text>
                     <TextInput
                         style={styles.input}
