@@ -1,67 +1,102 @@
 import React from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useAdminPet } from '../viewmodels/useRegisterPet';
 
 const AdminRegisterPetScreen = ({ navigation }) => {
     const { form, setForm, loading, handleSave } = useAdminPet(navigation);
 
     return (
-        <ScrollView style={styles.container}>
-            <View style={styles.card}>
-                <Text style={styles.title}>Register New Pet</Text>
-
-                <Text style={styles.label}>Nombre:</Text>
-                <TextInput style={styles.input} value={form.name} onChangeText={(v) => setForm({ ...form, name: v })} />
-
-                <View style={styles.row}>
-                    <View style={{ flex: 1, marginRight: 10 }}>
-                        <Text style={styles.label}>Raza:</Text>
-                        <TextInput style={styles.input} value={form.dogbreed} onChangeText={(v) => setForm({ ...form, dogbreed: v })} />
+        <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+            <ScrollView style={styles.container}>
+                {/* Header Section */}
+                <View style={styles.header}>
+                    <View style={styles.logoContainer}>
+                        <View style={styles.placeholderLogo}>
+                            <Text style={{ fontSize: 10 }}>Logo</Text>
+                        </View>
                     </View>
-                    <View style={{ flex: 1 }}>
-                        <Text style={styles.label}>Color:</Text>
-                        <TextInput style={styles.input} value={form.color} onChangeText={(v) => setForm({ ...form, color: v })} />
+                    <View style={styles.headerTextContainer}>
+                        <Text style={styles.headerTitle}>PetAdopt</Text>
+                        <Text style={styles.headerSubtitle}>Pet form</Text>
                     </View>
                 </View>
 
+                <View style={styles.divider} />
+
+                {/* Form Fields */}
+                <Text style={styles.label}>NAME</Text>
+                <TextInput 
+                    style={styles.input} 
+                    value={form.name} 
+                    onChangeText={(v) => setForm({ ...form, name: v })} 
+                />
+
+                <Text style={styles.label}>Race</Text>
+                <TextInput 
+                    style={styles.input} 
+                    value={form.dogbreed} 
+                    onChangeText={(v) => setForm({ ...form, dogbreed: v })} 
+                />
+
+                <Text style={styles.label}>Age</Text>
+                <TextInput 
+                    style={styles.input} 
+                    value={form.age} 
+                    onChangeText={(v) => setForm({ ...form, age: v })} 
+                />
+
                 <View style={styles.row}>
-                    <View style={{ flex: 1, marginRight: 10 }}>
-                        <Text style={styles.label}>Tamaño:</Text>
-                        <TextInput style={styles.input} value={form.size} placeholder="Grande/Mediano" onChangeText={(v) => setForm({ ...form, size: v })} />
+                    <View style={{ flex: 1, marginRight: 20 }}>
+                        <Text style={styles.label}>Size</Text>
+                        <TextInput 
+                            style={styles.inputSmall} 
+                            value={form.size} 
+                            onChangeText={(v) => setForm({ ...form, size: v })} 
+                        />
                     </View>
                     <View style={{ flex: 1 }}>
-                        <Text style={styles.label}>Estado Salud:</Text>
-                        <TextInput style={styles.input} value={form.healtStatus} onChangeText={(v) => setForm({ ...form, healtStatus: v })} />
+                        <Text style={styles.label}>Sex</Text>
+                        <TextInput 
+                            style={styles.inputSmall} 
+                            value={form.gender} 
+                            onChangeText={(v) => setForm({ ...form, gender: v })} 
+                        />
                     </View>
                 </View>
 
-                <View style={styles.row}>
-                    <View style={{ flex: 1, marginRight: 10 }}>
-                        <Text style={styles.label}>Age (e.g. 2 years):</Text>
-                        <TextInput style={styles.input} value={form.age} onChangeText={(v) => setForm({ ...form, age: v })} />
-                    </View>
-                    <View style={{ flex: 1 }}>
-                        <Text style={styles.label}>Gender:</Text>
-                        <TextInput style={styles.input} value={form.gender} onChangeText={(v) => setForm({ ...form, gender: v })} />
-                    </View>
-                </View>
-
-                <Text style={styles.label}>Image URL:</Text>
-                <TextInput style={styles.input} value={form.imageUrl} placeholder="https://..." onChangeText={(v) => setForm({ ...form, imageUrl: v })} />
-
-                <Text style={styles.label}>Description:</Text>
+                <Text style={styles.label}>Description</Text>
                 <TextInput
-                    style={[styles.input, { height: 80 }]}
+                    style={[styles.input, { height: 70, borderRadius: 35 }]}
                     multiline
                     value={form.description}
                     onChangeText={(v) => setForm({ ...form, description: v })}
                 />
 
-                <TouchableOpacity style={styles.btnSave} onPress={handleSave} disabled={loading}>
-                    {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.btnText}>Save Pet</Text>}
+                <Text style={styles.label}>Load Photo</Text>
+                <TextInput 
+                    style={[styles.input, { width: '60%' }]} 
+                    value={form.imageUrl} 
+                    onChangeText={(v) => setForm({ ...form, imageUrl: v })} 
+                />
+
+                {/* Submit Button */}
+                <View style={styles.btnContainer}>
+                    <TouchableOpacity style={styles.btnSave} onPress={handleSave} disabled={loading}>
+                        {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.btnText}>Add pet</Text>}
+                    </TouchableOpacity>
+                </View>
+            </ScrollView>
+
+            {/* Footer Navigation */}
+            <View style={styles.footer}>
+                <TouchableOpacity style={styles.footerBtnBack} onPress={() => navigation.goBack()}>
+                    <Text style={styles.footerBtnText}>← Back</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.footerBtnProfile}>
+                    <Text style={styles.footerBtnText}>Profile</Text>
                 </TouchableOpacity>
             </View>
-        </ScrollView>
+        </View>
     );
 };
 
@@ -69,57 +104,118 @@ const styles = StyleSheet.create({
     container: { 
         flex: 1, 
         backgroundColor: '#FFFFFF',
-        paddingHorizontal: 20 
+        paddingHorizontal: 30,
     },
-    card: { 
-        backgroundColor: '#FFFFFF', 
-        paddingVertical: 20, 
-        marginTop: 10 
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 20,
+        marginBottom: 10
     },
-    title: { 
-        fontSize: 18, 
-        fontWeight: '700', 
-        marginBottom: 25, 
-        textAlign: 'left',
-        color: '#000',
-        textTransform: 'uppercase',
-        letterSpacing: 1
+    logoContainer: {
+        width: 60,
+        height: 40,
+    },
+    placeholderLogo: {
+        flex: 1,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    headerTextContainer: {
+        flex: 1,
+        alignItems: 'center',
+        marginRight: 60 // Compensar el logo para centrar texto
+    },
+    headerTitle: {
+        fontSize: 16,
+        fontWeight: '400',
+        color: '#000'
+    },
+    headerSubtitle: {
+        fontSize: 16,
+        fontWeight: '400',
+        color: '#000'
+    },
+    divider: {
+        height: 1,
+        backgroundColor: '#000',
+        marginBottom: 20
     },
     label: { 
-        fontSize: 11,
-        fontWeight: '700', 
-        marginTop: 15, 
+        fontSize: 14,
+        marginTop: 10, 
         marginBottom: 5,
-        color: '#666',
-        textTransform: 'uppercase'
+        color: '#000',
+        marginLeft: 10
     },
     input: { 
-        borderWidth: 1, 
-        borderColor: '#000', 
-        borderRadius: 2, 
-        padding: 10,
+        backgroundColor: '#D9D9D9', 
+        borderRadius: 20, 
+        paddingHorizontal: 20,
+        paddingVertical: 10,
         fontSize: 14,
-        backgroundColor: '#FFF'
+        marginBottom: 5,
+        minHeight: 40
+    },
+    inputSmall: {
+        backgroundColor: '#D9D9D9', 
+        borderRadius: 20, 
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        fontSize: 14,
+        marginBottom: 5,
     },
     row: { 
         flexDirection: 'row',
-        marginTop: 5
+        justifyContent: 'space-between'
+    },
+    btnContainer: {
+        alignItems: 'center',
+        marginTop: 30,
+        marginBottom: 20
     },
     btnSave: { 
-        backgroundColor: '#000', 
-        padding: 15, 
-        borderRadius: 2, 
-        alignItems: 'center', 
-        marginTop: 35,
+        backgroundColor: '#5C6BC0', 
+        paddingVertical: 12, 
+        paddingHorizontal: 40,
+        borderRadius: 0, 
         borderWidth: 1,
         borderColor: '#000'
     },
     btnText: { 
         color: '#FFF',
-        fontWeight: '700', 
-        fontSize: 14,
-        textTransform: 'uppercase',
-        letterSpacing: 1
+        fontSize: 16,
+    },
+    footer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingHorizontal: 10,
+        paddingVertical: 15,
+        borderTopWidth: 1,
+        borderColor: '#eee'
+    },
+    footerBtnBack: {
+        backgroundColor: '#76D7A4',
+        paddingVertical: 10,
+        paddingHorizontal: 30,
+        borderWidth: 1,
+        borderColor: '#000',
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    footerBtnProfile: {
+        backgroundColor: '#76D7A4',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderWidth: 1,
+        borderColor: '#000'
+    },
+    footerBtnText: {
+        color: '#000',
+        fontSize: 18,
+        fontWeight: '400'
     }
 });
 

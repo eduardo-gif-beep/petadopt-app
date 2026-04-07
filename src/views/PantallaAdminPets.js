@@ -1,34 +1,45 @@
 import React from 'react';
-import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, FlatList, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useAdminRequests } from '../viewmodels/useAdminPets';
 
 const AdminDashboardScreen = ({ navigation }) => {
     const { requests, loading, handleStatusUpdate } = useAdminRequests();
 
-    if (loading) return <ActivityIndicator size="large" color="#000" style={{ flex: 1 }} />;
+    if (loading) return <ActivityIndicator size="large" color="#6FCF97" style={{ flex: 1 }} />;
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Admin Panel: Adoptions</Text>
+            {/* Header estilizado */}
+            <View style={styles.header}>
+                <Text style={styles.title}>Admin Panel</Text>
+                <Text style={styles.subTitle}>Adoption Requests</Text>
+            </View>
 
             <FlatList
                 data={requests}
                 keyExtractor={(item) => item._id}
+                contentContainerStyle={styles.listContent}
+                showsVerticalScrollIndicator={false}
                 renderItem={({ item }) => (
                     <View style={styles.requestCard}>
                         <View style={styles.infoRow}>
-                            <Text style={styles.userText}>User: {item.userId?.name || 'Unknown'}</Text>
-                            <Text style={styles.petText}>Pet: {item.petId?.name}</Text>
+                            <Text style={styles.userText}>{item.userId?.name || 'Unknown User'}</Text>
+                            <Text style={styles.petText}>🐾 {item.petId?.name}</Text>
                         </View>
+                        
                         <View style={styles.detailsRow}>
-                            <Text style={styles.detailText}> income: ${item.income}</Text>
-                            <Text style={styles.detailText}> yard: {item.haveyard ? 'YES' : 'NO'}</Text>
-                            <Text style={[styles.statusBadge, { color: item.status === 'pendiente' ? '#888' : '#000' }]}>
-                                Status: {item.status.toUpperCase()}
-                            </Text>
+                            <View style={styles.detailPill}>
+                                <Text style={styles.detailText}>💰 ${item.income}</Text>
+                            </View>
+                            <View style={styles.detailPill}>
+                                <Text style={styles.detailText}>🏡 Yard: {item.haveyard ? 'YES' : 'NO'}</Text>
+                            </View>
                         </View>
 
-                        <Text style={styles.motiveText}>Motive: {item.motive}</Text>
+                        <Text style={styles.motiveLabel}>Motive:</Text>
+                        <Text style={styles.motiveText} numberOfLines={2}>{item.motive}</Text>
+
+                        <View style={styles.divider} />
 
                         {item.status === 'pendiente' ? (
                             <View style={styles.actionRow}>
@@ -43,22 +54,30 @@ const AdminDashboardScreen = ({ navigation }) => {
                                     style={[styles.btn, styles.btnReject]}
                                     onPress={() => handleStatusUpdate(item._id, 'rechazado')}
                                 >
-                                    <Text style={[styles.btnText, styles.btnTextSecondary]}>Reject</Text>
+                                    <Text style={styles.btnText}>Reject</Text>
                                 </TouchableOpacity>
                             </View>
                         ) : (
-                            <Text style={styles.completedText}>Decision already registered</Text>
+                            <View style={styles.statusFooter}>
+                                <Text style={[
+                                    styles.completedText, 
+                                    { color: item.status === 'aprobado' ? '#6FCF97' : '#AF4A3D' }
+                                ]}>
+                                    Result: {item.status.toUpperCase()}
+                                </Text>
+                            </View>
                         )}
                     </View>
                 )}
             />
 
+            {/* Navbar inferior estilizada */}
             <View style={styles.navBar}>
-                <TouchableOpacity onPress={() => navigation.navigate("RegisterPet")}>
-                    <Text style={styles.navText}>Register New Pet</Text>
+                <TouchableOpacity style={styles.navBtn} onPress={() => navigation.navigate("RegisterPet")}>
+                    <Text style={styles.navText}>➕ New Pet</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate("Pets")}>
-                    <Text style={styles.navText}>Home</Text>
+                <TouchableOpacity style={styles.navBtn} onPress={() => navigation.navigate("Pets")}>
+                    <Text style={styles.navText}>🏠 Home</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -68,103 +87,152 @@ const AdminDashboardScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: { 
         flex: 1, 
-        backgroundColor: '#FFF', 
-        paddingHorizontal: 20, 
-        paddingTop: 50 
+        backgroundColor: '#FFFFFF', // Blanco Fondo
+    },
+    header: {
+        paddingTop: Platform.OS === 'ios' ? 60 : 40,
+        paddingHorizontal: 25,
+        paddingBottom: 20,
+        borderBottomWidth: 1,
+        borderColor: '#D9D9D9',
+        alignItems: 'center'
     },
     title: { 
-        fontSize: 18, 
-        fontWeight: '400', 
-        marginBottom: 30, 
-        color: '#525151',
+        fontFamily: 'Poppins-Bold',
+        fontSize: 22, 
+        color: '#000000',
         textTransform: 'uppercase',
         letterSpacing: 1
     },
+    subTitle: {
+        fontFamily: 'Poppins-Regular',
+        fontSize: 14,
+        color: '#6FCF97', // Verde Primario
+        marginTop: -5
+    },
+    listContent: {
+        padding: 20,
+        paddingBottom: 100
+    },
     requestCard: { 
-        paddingVertical: 15, 
-        borderBottomWidth: 1, 
-        borderColor: '#EEE', 
-        marginBottom: 10
+        backgroundColor: '#D9D9D9', // Gris Oscuro para Cards
+        borderRadius: 20,
+        padding: 18,
+        marginBottom: 15,
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
     },
     infoRow: { 
         flexDirection: 'row', 
         justifyContent: 'space-between', 
-        marginBottom: 4 
+        alignItems: 'center',
+        marginBottom: 12
+    },
+    userText: { 
+        fontFamily: 'Poppins-SemiBold',
+        fontSize: 16, 
+        color: '#000000',
+    },
+    petText: { 
+        fontFamily: 'Poppins-Medium',
+        fontSize: 14, 
+        color: '#333' 
     },
     detailsRow: {
         flexDirection: 'row',
-        gap: 15,
-        marginBottom: 8
+        gap: 10,
+        marginBottom: 12
+    },
+    detailPill: {
+        backgroundColor: '#FFFFFF',
+        paddingHorizontal: 12,
+        paddingVertical: 4,
+        borderRadius: 15,
     },
     detailText: {
+        fontFamily: 'Poppins-Regular',
         fontSize: 11,
-        color: '#555',
-        fontWeight: '500'
+        color: '#000',
     },
-    statusBadge: {
-        fontSize: 10,
-        fontWeight: 'bold',
-        marginLeft: 'auto'
-    },
-    userText: { 
-        fontSize: 14, 
-        color: '#696969',
-        fontWeight: '600'
-    },
-    petText: { 
-        fontSize: 14, 
-        color: '#888' 
+    motiveLabel: {
+        fontFamily: 'Poppins-SemiBold',
+        fontSize: 12,
+        color: '#000',
+        marginBottom: 2
     },
     motiveText: { 
+        fontFamily: 'Poppins-Regular',
         fontSize: 12, 
-        color: '#AAA', 
-        marginBottom: 15,
-        fontStyle: 'italic'
+        color: '#444', 
+        marginBottom: 10,
+    },
+    divider: {
+        height: 1,
+        backgroundColor: 'rgba(0,0,0,0.05)',
+        marginVertical: 10
     },
     actionRow: { 
         flexDirection: 'row', 
+        justifyContent: 'space-between',
         gap: 10 
     },
     btn: { 
-        paddingVertical: 6, 
-        paddingHorizontal: 12, 
-        borderWidth: 1, 
-        borderColor: '#979797', 
-        borderRadius: 2 
+        flex: 1,
+        height: 40,
+        borderRadius: 20, // Estilo Píldora
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 1.5,
+        borderColor: '#000'
     },
     btnApprove: { 
-        backgroundColor: '#a9a9a9' 
+        backgroundColor: '#6FCF97', // Verde Primario
     },
     btnReject: { 
-        backgroundColor: '#FFF' 
+        backgroundColor: '#AF4A3D', // Rojo Crítico
     },
     btnText: { 
-        fontSize: 11, 
-        color: '#FFF',
+        fontFamily: 'Poppins-Bold',
+        fontSize: 13, 
+        color: '#FFFFFF',
         textTransform: 'uppercase',
-        fontWeight: 'bold'
     },
-    btnTextSecondary: {
-        color: '#000'
+    statusFooter: {
+        alignItems: 'center',
+        paddingVertical: 5
     },
     completedText: {
-        fontSize: 10,
-        color: '#BBB',
-        textTransform: 'uppercase',
+        fontFamily: 'Poppins-Bold',
+        fontSize: 12,
         letterSpacing: 0.5
     },
     navBar: {
+        position: 'absolute',
+        bottom: 0,
         flexDirection: 'row',
-        justifyContent: 'space-between',
-        paddingVertical: 20,
+        width: '100%',
+        backgroundColor: '#FFFFFF',
         borderTopWidth: 1,
-        borderColor: '#a5a5a5',
-        marginTop: 10 
+        borderColor: '#D9D9D9',
+        paddingBottom: Platform.OS === 'ios' ? 30 : 15,
+        paddingTop: 15,
+        justifyContent: 'space-around'
+    },
+    navBtn: {
+        backgroundColor: '#FFFFFF',
+        paddingVertical: 8,
+        paddingHorizontal: 20,
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: '#000'
     },
     navText: {
-        color: '#8b8b8b',
+        fontFamily: 'Poppins-SemiBold',
+        color: '#000',
         fontSize: 12,
-        fontWeight: 'bold'
     }
 });
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getMyRequests } from "../services/AdoptionService";
 
 export const useRecentRequests = () => {
@@ -26,5 +26,11 @@ export const useRecentRequests = () => {
         setRefreshing(true);
         fetchRequests();
     };
-    return { requests, loading, refreshing, onRefresh};
+     const formatDate = (date) => {
+        return new
+        Date(date).toLocaleDateString();
+     };
+
+
+    return { requests, loading, refreshing, onRefresh, formatDate};
 };

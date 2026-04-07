@@ -1,6 +1,6 @@
-import React, { useCallback } from 'react'; // 1. Importa useCallback
-import { FlatList, StyleSheet, Text, View, TouchableOpacity, ActivityIndicator, RefreshControl, Image } from "react-native";
-import { useFocusEffect } from '@react-navigation/native'; // 2. Importa useFocusEffect
+import { useFocusEffect } from '@react-navigation/native';
+import React, { useCallback } from 'react';
+import { ActivityIndicator, FlatList, Image, Platform, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { usePets } from "../viewmodels/usePets";
 
 const PantallaPets = ({ navigation }) => {
@@ -14,24 +14,28 @@ const PantallaPets = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.brand}>PetAdopt</Text>
-            <Text style={styles.title}>Pets for adoption</Text>
+            {/* Header Estilizado */}
+            <View style={styles.header}>
+                <Text style={styles.brand}>PetAdopt</Text>
+                <Text style={styles.title}>Pets for adoption</Text>
+            </View>
 
             {loading && pets.length === 0 ? (
                 <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color="#28a745" />
-                    <Text style={styles.loadingText}>Loading pets...</Text>
+                    <ActivityIndicator size="large" color="#6FCF97" />
+                    <Text style={styles.loadingText}>Loading furry friends...</Text>
                 </View>
             ) : (
                 <FlatList
                     data={pets}
                     keyExtractor={(item) => item.id.toString()}
-                    contentContainerStyle={{ paddingBottom: 20 }}
+                    contentContainerStyle={styles.listContent}
+                    showsVerticalScrollIndicator={false}
                     refreshControl={
                         <RefreshControl
                             refreshing={loading}
                             onRefresh={refrescar}
-                            colors={['#28a745']}
+                            colors={['#6FCF97']}
                         />
                     }
                     ListEmptyComponent={
@@ -47,12 +51,17 @@ const PantallaPets = ({ navigation }) => {
                                 />
                             ) : (
                                 <View style={styles.placeholderImagen}>
-                                    <Text style={{ color: '#999' }}>No Image</Text>
+                                    <Text style={styles.placeholderText}>No Image</Text>
                                 </View>
                             )}
 
                             <View style={styles.infoWrapper}>
-                                <Text style={styles.name}>{item.name}</Text>
+                                <View style={styles.nameRow}>
+                                    <Text style={styles.name}>{item.name}</Text>
+                                    <View style={styles.statusBadge}>
+                                        <Text style={styles.statusText}>{item.status.toUpperCase()}</Text>
+                                    </View>
+                                </View>
 
                                 <Text style={styles.info}>
                                     {item.especie} • {item.age} • {item.gender}
@@ -61,8 +70,6 @@ const PantallaPets = ({ navigation }) => {
                                 <Text style={styles.subInfo}>
                                     Size: {item.size} | Color: {item.color}
                                 </Text>
-
-                                <Text style={styles.status}>{item.status}</Text>
 
                                 <TouchableOpacity
                                     style={styles.btnView}
@@ -76,15 +83,16 @@ const PantallaPets = ({ navigation }) => {
                 />
             )}
 
+            {/* Barra de Navegación Inferior */}
             <View style={styles.navBar}>
                 {!isAdmin && (
-                    <TouchableOpacity onPress={() => navigation.navigate("Requests")}>
+                    <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Requests")}>
                         <Text style={styles.navText}>My Requests</Text>
                     </TouchableOpacity>
                 )}
                 
-                <TouchableOpacity style={styles.footerBtn} onPress={() => navigation.navigate("Profile")}>
-                    <Text>Profile</Text>
+                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Profile")}>
+                    <Text style={styles.navText}>Profile</Text>
                 </TouchableOpacity>
 
                 {isAdmin && (
@@ -92,7 +100,7 @@ const PantallaPets = ({ navigation }) => {
                         style={styles.adminBadge}
                         onPress={() => navigation.navigate("Admin")}
                     >
-                        <Text style={styles.navTextAdmin}>Panel Admin</Text>
+                        <Text style={styles.navTextAdmin}>Admin Panel</Text>
                     </TouchableOpacity>
                 )}
             </View>
@@ -104,7 +112,15 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#FFFFFF',
-        paddingHorizontal: 20
+    },
+    header: {
+        paddingTop: Platform.OS === 'ios' ? 60 : 40,
+        paddingHorizontal: 25,
+        paddingBottom: 15,
+        backgroundColor: '#FFFFFF',
+        borderBottomWidth: 1,
+        borderColor: '#D9D9D9',
+        alignItems: 'center'
     },
     loadingContainer: {
         flex: 1,
@@ -112,129 +128,144 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     loadingText: {
+        fontFamily: 'Poppins-Medium',
         marginTop: 10,
-        fontSize: 12,
-        color: '#000',
-        textTransform: 'uppercase'
+        fontSize: 14,
+        color: '#6FCF97',
     },
     brand: {
-        fontSize: 14,
-        fontWeight: "400",
-        color: '#AAA',
-        textAlign: 'center',
-        marginTop: 40,
-        letterSpacing: 3,
+        fontFamily: 'Poppins-Bold',
+        fontSize: 12,
+        color: '#6FCF97',
+        letterSpacing: 4,
         textTransform: 'uppercase'
     },
     title: {
+        fontFamily: 'Poppins-Bold',
         fontSize: 22,
-        fontWeight: '700',
-        marginVertical: 10,
-        textAlign: "center",
-        color: '#000'
+        color: '#000',
+        marginTop: 2
+    },
+    listContent: {
+        padding: 20,
+        paddingBottom: 100
     },
     card: {
-        backgroundColor: "#fff",
-        borderRadius: 2,
-        marginBottom: 24,
-        borderWidth: 1,
-        borderColor: '#E5E7EB',
-        overflow: 'hidden'
+        backgroundColor: "#D9D9D9", // Gris oscuro para la card
+        borderRadius: 20,
+        marginBottom: 20,
+        overflow: 'hidden',
+        elevation: 3,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
     },
     petImage: {
         width: '100%',
-        height: 160,
-        backgroundColor: '#F3F4F6'
+        height: 180,
     },
     placeholderImagen: {
         width: '100%',
-        height: 160,
-        backgroundColor: '#F9FAFB',
+        height: 180,
+        backgroundColor: '#CCC',
         justifyContent: 'center',
         alignItems: 'center',
-        borderBottomWidth: 1,
-        borderColor: '#E5E7EB'
+    },
+    placeholderText: {
+        fontFamily: 'Poppins-Regular',
+        color: '#666'
     },
     infoWrapper: {
         padding: 16,
-        alignItems: 'flex-start'
+    },
+    nameRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
     },
     name: {
-        fontSize: 18,
-        fontWeight: "700",
+        fontFamily: 'Poppins-Bold',
+        fontSize: 20,
         color: '#000',
-        textTransform: 'uppercase'
+    },
+    statusBadge: {
+        backgroundColor: '#FFFFFF',
+        paddingHorizontal: 8,
+        paddingVertical: 2,
+        borderRadius: 10,
+    },
+    statusText: {
+        fontFamily: 'Poppins-Bold',
+        fontSize: 10,
+        color: '#6FCF97'
     },
     info: {
-        fontSize: 13,
-        color: '#4B5563',
-        marginTop: 4,
-        fontWeight: '500'
+        fontFamily: 'Poppins-Medium',
+        fontSize: 14,
+        color: '#333',
+        marginTop: 2,
     },
     subInfo: {
+        fontFamily: 'Poppins-Regular',
         fontSize: 12,
-        color: '#9CA3AF',
-        marginTop: 2,
-        marginBottom: 12
-    },
-    status: {
-        fontSize: 10,
-        fontWeight: 'bold',
-        color: '#000',
-        textTransform: 'uppercase',
-        backgroundColor: '#F3F4F6',
-        paddingHorizontal: 6,
-        paddingVertical: 2,
-        marginBottom: 15,
-        alignSelf: 'flex-start'
+        color: '#555',
+        marginBottom: 15
     },
     btnView: {
         width: '100%',
-        paddingVertical: 10,
-        borderWidth: 1,
-        borderColor: '#000',
-        borderRadius: 2,
-        alignItems: 'center'
+        height: 45,
+        backgroundColor: '#6FCF97', // Verde Primario
+        borderRadius: 25, // Estilo píldora
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 1.5,
+        borderColor: '#000'
     },
     btnText: {
-        fontSize: 12,
-        fontWeight: '700',
-        color: '#000',
-        letterSpacing: 1
+        fontFamily: 'Poppins-Bold',
+        fontSize: 14,
+        color: '#FFFFFF',
     },
     navBar: {
+        position: 'absolute',
+        bottom: 0,
+        width: '100%',
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'space-around',
         alignItems: 'center',
-        paddingVertical: 20,
+        paddingVertical: Platform.OS === 'ios' ? 30 : 15,
         borderTopWidth: 1,
-        borderColor: '#000',
-        backgroundColor: '#fff'
+        borderColor: '#D9D9D9',
+        backgroundColor: '#FFFFFF'
+    },
+    navItem: {
+        paddingVertical: 5,
     },
     navText: {
+        fontFamily: 'Poppins-SemiBold',
         color: '#000',
-        fontSize: 12,
-        fontWeight: '700',
-        textDecorationLine: 'underline'
+        fontSize: 13,
+        textDecorationLine: 'none'
     },
     adminBadge: {
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderWidth: 1,
-        borderColor: '#000',
-        borderRadius: 2
+        backgroundColor: '#000',
+        paddingHorizontal: 15,
+        paddingVertical: 8,
+        borderRadius: 20,
     },
     navTextAdmin: {
-        color: '#000',
-        fontSize: 11,
-        fontWeight: 'bold',
+        fontFamily: 'Poppins-Bold',
+        color: '#FFFFFF',
+        fontSize: 12,
         textTransform: 'uppercase'
     },
     emptyText: {
+        fontFamily: 'Poppins-Regular',
         textAlign: 'center',
         marginTop: 50,
         color: '#999',
-        fontSize: 14
     }
 });
+
 export default PantallaPets;
