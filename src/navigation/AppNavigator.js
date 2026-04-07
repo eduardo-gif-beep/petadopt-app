@@ -16,14 +16,14 @@ const AppNavigator = () => {
     return (
         <Stack.Navigator initialRouteName="Login">
 
-            <Stack.Screen name="Login" component={PantallaLogin} />
-            <Stack.Screen name="Register" component={PantallaRegister} />
-            <Stack.Screen name="Pets" component={PantallaPets} />
-            <Stack.Screen name="Request" component={PantallaAdoptionRequest} />
-            <Stack.Screen name="Requests" component={PantallaRequests} />
-            <Stack.Screen name="Admin" component={PantallaAdminPets} />
-            <Stack.Screen name="RegisterPet" component={PantallaRegisterPet} />
-            <Stack.Screen name="Profile" component={PantallaPerfil} />
+            <Stack.Screen name="Login" component={PantallaLogin} options={{ headerShown: false }}/>
+            <Stack.Screen name="Register" component={PantallaRegister} options={{ headerShown: false }}/>
+            <Stack.Screen name="Pets" component={PantallaPets} options={{ headerShown: false }}/>
+            <Stack.Screen name="Request" component={PantallaAdoptionRequest} options={{ headerShown: false }}/>
+            <Stack.Screen name="Requests" component={PantallaRequests} options={{ headerShown: false }}/>
+            <Stack.Screen name="Admin" component={PantallaAdminPets} options={{ headerShown: false }}/>
+            <Stack.Screen name="RegisterPet" component={PantallaRegisterPet} options={{ headerShown: false }}/>
+            <Stack.Screen name="Profile" component={PantallaPerfil} options={{ headerShown: false }}/>
         </Stack.Navigator>
     );
 };

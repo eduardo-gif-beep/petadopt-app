@@ -1,151 +1,255 @@
 import React from 'react';
-import { View, Text, FlatList, StyleSheet, RefreshControl, ActivityIndicator } from 'react-native';
+import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View, Image, Platform } from 'react-native';
 import { useRecentRequests } from '../viewmodels/useRequests';
 
-const RecentRequestsScreen = () => {
+const RecentRequestsScreen = ({ navigation }) => {
     const { requests, loading, refreshing, onRefresh, formatDate } = useRecentRequests();
 
-const getStatusStyle = (status) => {
-    const currentStatus = status ? status.toLowerCase().trim() : '';
-
-    switch (currentStatus) {
-        case 'aprobado': 
-            return styles.statusApproved;
-        case 'rechazado': 
-            return styles.statusRejected;
-        case 'pendiente': 
-            return styles.statusPending;
-        default: 
-            return styles.statusPending;
-    }
-};
+    const getStatusStyle = (status) => {
+        const currentStatus = status ? status.toLowerCase().trim() : '';
+        switch (currentStatus) {
+            case 'aprobado': return styles.statusApproved;
+            case 'rechazado': return styles.statusRejected;
+            default: return styles.statusPending;
+        }
+    };
 
     if (loading) return <ActivityIndicator size="large" style={{ flex: 1 }} color="#2ecc71" />;
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>My Requests</Text>
-            
+        <View style={styles.mainContainer}>
+            {/* Header Section */}
+            <View style={styles.header}>
+                <TouchableOpacity style={styles.btnBack} onPress={() => navigation.canGoBack() ? navigation.goBack() : navigation.navigate("Pets")}>
+                    <Text style={styles.textoBack}>← Back</Text>
+                </TouchableOpacity>
+                <View style={styles.headerTextContainer}>
+                    <Text style={styles.headerTitle}>PetAdopt</Text>
+                    <Text style={styles.headerSubtitle}>Recent Request</Text>
+                </View>
+                <View style={styles.logoContainer}>
+                    <Image
+                        source={require('../images/logo.png')}
+                        style={styles.logoImage}
+                        resizeMode="contain"
+                    />
+                </View>
+            </View>
+            <View style={styles.divider} />
+
             {requests.length === 0 ? (
-                <Text style={styles.emptyText}>No has enviado solicitudes aún. 🐾</Text>
+                <Text style={styles.emptyText}>You haven't sent any request yet. 🐾</Text>
             ) : (
                 <FlatList
                     data={requests}
                     keyExtractor={(item) => item._id}
+                    contentContainerStyle={styles.listContent}
                     refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-                    renderItem={({ item }) => (
-                        <View style={styles.card}>
-                            <View style={styles.cardHeader}>
-                                <Text style={styles.petName}>{item.petId?.name || 'Mascota'}</Text>
-                                <View style={[styles.statusBadge, getStatusStyle(item.status)]}>
-                                    <Text style={styles.statusText}>{item.status.toUpperCase()}</Text>
+                    renderItem={({ item }) => {
+                        const petExist = item.petId !== null && item.petId !== undefined;
+
+                        return (
+                            <View style={[styles.card, !petExist && styles.cardDisabled]}>
+                                <View style={styles.cardHeader}>
+                                    <View>
+                                        <Text style={styles.petNameLabel}>
+                                            {petExist ? `Pet Name: ${item.petId.name}` : '🐾 Mascota no disponible'}
+                                        </Text>
+                                        <Text style={styles.dateLabel}>Date: Added Recently</Text>
+                                    </View>
+                                    <View style={[styles.statusBadge, getStatusStyle(item.status)]}>
+                                        <Text style={styles.statusText}>
+                                            {item.status === 'pendiente' ? 'Pending' : item.status === 'rechazado' ? 'Rejected' : 'Approved'}
+                                        </Text>
+                                    </View>
+                                </View>
+
+                                <View style={styles.cardDivider} />
+
+                                <View style={styles.detailsContainer}>
+                                    {petExist ? (
+                                        <>
+                                            <Text style={styles.detailText}>Name: {item.petId.name}</Text>
+                                            <Text style={styles.detailText}>Age: {item.petId.age || 'N/A'}</Text>
+                                            <Text style={styles.detailText}>Color: {item.petId.color || 'N/A'}</Text>
+                                        </>
+                                    ) : (
+                                        <Text style={[styles.detailText, { fontStyle: 'italic', color: '#666' }]}>
+                                            Esta mascota ha sido eliminada del catálogo por el administrador.
+                                        </Text>
+                                    )}
                                 </View>
                             </View>
-                            
-                            
-                            <Text style={styles.date}>Estado: Actualizado recientemente </Text>
-                            
-                            <Text style={styles.motive} numberOfLines={2}>Motivo: {item.motive}</Text>
-                            
-                            {item.observaciones && (
-                                <Text style={styles.obs}>Notas: {item.observaciones}</Text>
-                            )}
-                        </View>
-                    )}
+                        );
+                    }}
                 />
             )}
+
+            {/* Footer Navigation */}
+            <View style={styles.footer}>
+                <TouchableOpacity style={styles.footerBtn} onPress={() => navigation.navigate('Pets')}>
+                    <Text style={styles.footerBtnText}>Home</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.footerBtn} onPress={() => navigation.navigate('Profile')}>
+                    <Text style={styles.footerBtnText}>Profile</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    container: { 
-        flex: 1, 
-        backgroundColor: '#FFFFFF', 
-        paddingHorizontal: 20, 
-        paddingTop: 40 
+    mainContainer: {
+        flex: 1,
+        backgroundColor: '#FFFFFF',
     },
-    title: { 
-        fontSize: 20, 
-        fontWeight: '700', 
-        marginBottom: 25, 
-        textAlign: 'left', 
-        color: '#000',
-        textTransform: 'uppercase',
-        letterSpacing: 1
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 40,
+        paddingHorizontal: 20,
+        marginBottom: 10,
+        paddingTop: Platform.OS === 'ios' ? 60 : 40,
     },
-    card: { 
-        backgroundColor: '#FFF', 
-        padding: 16, 
-        marginBottom: 12, 
-        borderWidth: 1, 
-        borderColor: '#000',
-        borderRadius: 2 
+    logoContainer: {
+        width: 50,
+        height: 35,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
-    cardHeader: { 
-        flexDirection: 'row', 
-        justifyContent: 'space-between', 
-        alignItems: 'flex-start', 
-        marginBottom: 12 
+    logoImage: {
+        width: '100%',
+        height: '100%',
     },
-    petName: { 
-        fontSize: 16, 
-        fontWeight: 'bold', 
-        color: '#000',
-        textTransform: 'uppercase'
-    },
-    statusBadge: { 
-        paddingHorizontal: 8, 
-        paddingVertical: 2, 
+    placeholderLogo: {
+        flex: 1,
         borderWidth: 1,
-        borderRadius: 2
+        borderColor: '#ccc',
+        justifyContent: 'center',
+        alignItems: 'center'
     },
-    statusText: { 
-        fontSize: 10, 
-        fontWeight: '700' 
+    headerTextContainer: {
+        flex: 1,
+        alignItems: 'center',
+        marginRight: 50
     },
-    statusApproved: { 
-        backgroundColor: '#969696',
-        borderColor: '#8f8f8f' 
-    },
-    statusRejected: { 
-        backgroundColor: 'transparent', 
-        borderColor: '#D1D5DB'
-    },
-    statusPending: { 
-        backgroundColor: '#F3F4F6', 
-        borderColor: '#838383',
-        borderStyle: 'dashed'
-    },
-    statusTextApproved: { color: '#FFF' },
-    statusTextNeutral: { color: '#898989' },
-
-    date: { 
-        fontSize: 11, 
-        color: '#888',
-        marginBottom: 4 
-    },
-    motive: { 
-        fontSize: 13, 
-        color: '#333', 
-        lineHeight: 18 
-    },
-    obs: { 
-        fontSize: 12, 
-        color: '#666', 
-        marginTop: 10, 
-        paddingTop: 10,
-        borderTopWidth: 1, 
-        borderTopColor: '#EEE',
-        fontStyle: 'italic'
-    },
-    emptyText: { 
-        textAlign: 'center', 
-        marginTop: 60, 
-        color: '#AAA', 
+    headerTitle: {
         fontSize: 14,
-        textTransform: 'uppercase'
-    }
+        color: '#000'
+    },
+    headerSubtitle: {
+        fontSize: 14,
+        color: '#000'
+    },
+    divider: {
+        height: 1,
+        backgroundColor: '#000',
+        marginHorizontal: 20,
+        marginBottom: 10
+    },
+    listContent: {
+        paddingHorizontal: 20,
+        paddingBottom: 100
+    },
+    card: {
+        backgroundColor: '#D9D9D9',
+        borderRadius: 40,
+        padding: 20,
+        marginBottom: 20,
+        borderWidth: 0.5,
+        borderColor: '#999'
+    },
+    cardDisabled: {
+        backgroundColor: '#EEEEEE', // Un tono más claro para indicar que no está disponible
+        borderColor: '#CCC'
+    },
+    cardHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    petNameLabel: {
+        fontSize: 18,
+        fontWeight: '500',
+        color: '#000'
+    },
+    dateLabel: {
+        fontSize: 12,
+        color: '#333'
+    },
+    cardDivider: {
+        height: 1,
+        backgroundColor: '#000',
+        marginVertical: 5
+    },
+    statusBadge: {
+        paddingHorizontal: 20,
+        paddingVertical: 5,
+        borderRadius: 15,
+        borderWidth: 1,
+        borderColor: '#000'
+    },
+    statusPending: { backgroundColor: '#FFF59D' },
+    statusRejected: { backgroundColor: '#CC5544' },
+    statusApproved: { backgroundColor: '#76D7A4' },
+    statusText: {
+        fontSize: 12,
+        fontWeight: '500',
+        color: '#000'
+    },
+    detailsContainer: {
+        marginTop: 5
+    },
+    detailText: {
+        fontSize: 13,
+        color: '#000',
+        marginBottom: 2
+    }, footer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        paddingHorizontal: 20,
+        paddingVertical: 15,
+        borderTopWidth: 1,
+        borderColor: '#000',
+        backgroundColor: '#FFF',
+        position: 'absolute',
+        bottom: 0,
+        width: '100%'
+    },
+    footerBtn: {
+        marginHorizontal: 20,
+        backgroundColor: '#76D7A4',
+        borderWidth: 1,
+        borderColor: '#000',
+        paddingVertical: 10,
+        borderRadius: 0,
+        width: '48%',
+        alignItems: 'center',
+        borderRadius: 25,
+    },
+    footerBtnText: {
+        fontSize: 14,
+        color: '#000'
+    },
+    emptyText: {
+        textAlign: 'center',
+        marginTop: 50,
+        color: '#666'
+    },
+        btnBack: {
+        backgroundColor: '#6FCF97', // Verde Primario
+        paddingVertical: 8,
+        paddingHorizontal: 15,
+        borderRadius: 25,
+        borderWidth: 1,
+        borderColor: '#000',
+        marginRight: 15,
+    },
+    textoBack: {
+        fontFamily: 'Poppins-Regular',
+        fontSize: 18,
+        color: '#ffffff',
+    },
 });
 
 export default RecentRequestsScreen;

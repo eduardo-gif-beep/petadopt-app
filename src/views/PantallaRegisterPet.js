@@ -1,126 +1,279 @@
 import React from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import { 
+    ActivityIndicator, 
+    ScrollView, 
+    StyleSheet, 
+    Text, 
+    TextInput, 
+    TouchableOpacity, 
+    View, 
+    Image, 
+    Platform, 
+    KeyboardAvoidingView, 
+    TouchableWithoutFeedback, 
+    Keyboard 
+} from 'react-native';
 import { useAdminPet } from '../viewmodels/useRegisterPet';
 
 const AdminRegisterPetScreen = ({ navigation }) => {
     const { form, setForm, loading, handleSave } = useAdminPet(navigation);
 
     return (
-        <ScrollView style={styles.container}>
-            <View style={styles.card}>
-                <Text style={styles.title}>Register New Pet</Text>
+        <KeyboardAvoidingView 
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={{ flex: 1, backgroundColor: '#FFFFFF' }}
+        >
+            {/* Header Section */}
+            <View style={styles.header}>
+                <TouchableOpacity 
+                    style={styles.btnBack} 
+                    onPress={() => navigation.canGoBack() ? navigation.goBack() : navigation.navigate("Pets")}
+                >
+                    <Text style={styles.textoBack}>← Back</Text>
+                </TouchableOpacity>
 
-                <Text style={styles.label}>Nombre:</Text>
-                <TextInput style={styles.input} value={form.name} onChangeText={(v) => setForm({ ...form, name: v })} />
-
-                <View style={styles.row}>
-                    <View style={{ flex: 1, marginRight: 10 }}>
-                        <Text style={styles.label}>Raza:</Text>
-                        <TextInput style={styles.input} value={form.dogbreed} onChangeText={(v) => setForm({ ...form, dogbreed: v })} />
-                    </View>
-                    <View style={{ flex: 1 }}>
-                        <Text style={styles.label}>Color:</Text>
-                        <TextInput style={styles.input} value={form.color} onChangeText={(v) => setForm({ ...form, color: v })} />
-                    </View>
+                <View style={styles.headerTextContainer}>
+                    <Text style={styles.headerTitle}>PetAdopt</Text>
+                    <Text style={styles.headerSubtitle}>Pet Form</Text>
                 </View>
 
-                <View style={styles.row}>
-                    <View style={{ flex: 1, marginRight: 10 }}>
-                        <Text style={styles.label}>Tamaño:</Text>
-                        <TextInput style={styles.input} value={form.size} placeholder="Grande/Mediano" onChangeText={(v) => setForm({ ...form, size: v })} />
-                    </View>
-                    <View style={{ flex: 1 }}>
-                        <Text style={styles.label}>Estado Salud:</Text>
-                        <TextInput style={styles.input} value={form.healtStatus} onChangeText={(v) => setForm({ ...form, healtStatus: v })} />
-                    </View>
+                <View style={styles.logoContainer}>
+                    <Image
+                        source={require('../images/logo.png')}
+                        style={styles.logoImage}
+                        resizeMode="contain"
+                    />
                 </View>
+            </View>
 
-                <View style={styles.row}>
-                    <View style={{ flex: 1, marginRight: 10 }}>
-                        <Text style={styles.label}>Age (e.g. 2 years):</Text>
-                        <TextInput style={styles.input} value={form.age} onChangeText={(v) => setForm({ ...form, age: v })} />
+            <View style={styles.divider} />
+
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <ScrollView 
+                    style={styles.container}
+                    contentContainerStyle={{ paddingBottom: 100 }}
+                    showsVerticalScrollIndicator={false}
+                >
+                    {/* Form Fields */}
+                    <Text style={styles.label}>NAME</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={form.name}
+                        onChangeText={(v) => setForm({ ...form, name: v })}
+                        placeholder="Pet name"
+                    />
+
+                    <Text style={styles.label}>RACE / BREED</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={form.dogbreed}
+                        onChangeText={(v) => setForm({ ...form, dogbreed: v })}
+                        placeholder="Golden Retriever, Husky..."
+                    />
+
+                    <Text style={styles.label}>AGE</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={form.age}
+                        keyboardType="numeric"
+                        onChangeText={(v) => setForm({ ...form, age: v })}
+                        placeholder="e.g. 2 years"
+                    />
+
+                    <View style={styles.row}>
+                        <View style={{ flex: 1, marginRight: 20 }}>
+                            <Text style={styles.label}>SIZE</Text>
+                            <TextInput
+                                style={styles.input}
+                                value={form.size}
+                                onChangeText={(v) => setForm({ ...form, size: v })}
+                                placeholder="Small, Medium..."
+                            />
+                        </View>
+                        <View style={{ flex: 1 }}>
+                            <Text style={styles.label}>SEX</Text>
+                            <TextInput
+                                style={styles.input}
+                                value={form.gender}
+                                onChangeText={(v) => setForm({ ...form, gender: v })}
+                                placeholder="M / F"
+                            />
+                        </View>
                     </View>
-                    <View style={{ flex: 1 }}>
-                        <Text style={styles.label}>Gender:</Text>
-                        <TextInput style={styles.input} value={form.gender} onChangeText={(v) => setForm({ ...form, gender: v })} />
+
+                    <Text style={styles.label}>DESCRIPTION</Text>
+                    <TextInput
+                        style={[styles.input, styles.textArea]}
+                        multiline
+                        value={form.description}
+                        onChangeText={(v) => setForm({ ...form, description: v })}
+                        placeholder="Tell us about the pet's personality..."
+                    />
+
+                    <Text style={styles.label}>PHOTO URL</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={form.imageUrl}
+                        onChangeText={(v) => setForm({ ...form, imageUrl: v })}
+                        placeholder="https://image-link.com/photo.jpg"
+                        autoCapitalize="none"
+                    />
+
+                    {/* Submit Button */}
+                    <View style={styles.btnContainer}>
+                        <TouchableOpacity 
+                            style={[styles.btnSave, { opacity: loading ? 0.7 : 1 }]} 
+                            onPress={handleSave} 
+                            disabled={loading}
+                        >
+                            {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.btnText}>Add Pet</Text>}
+                        </TouchableOpacity>
                     </View>
-                </View>
+                </ScrollView>
+            </TouchableWithoutFeedback>
 
-                <Text style={styles.label}>Image URL:</Text>
-                <TextInput style={styles.input} value={form.imageUrl} placeholder="https://..." onChangeText={(v) => setForm({ ...form, imageUrl: v })} />
-
-                <Text style={styles.label}>Description:</Text>
-                <TextInput
-                    style={[styles.input, { height: 80 }]}
-                    multiline
-                    value={form.description}
-                    onChangeText={(v) => setForm({ ...form, description: v })}
-                />
-
-                <TouchableOpacity style={styles.btnSave} onPress={handleSave} disabled={loading}>
-                    {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.btnText}>Save Pet</Text>}
+            {/* Footer Navigation */}
+            <View style={styles.footer}>
+                <TouchableOpacity style={styles.footerBtn} onPress={() => navigation.navigate("Pets")}>
+                    <Text style={styles.footerBtnText}>Home</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.footerBtn} onPress={() => navigation.navigate("Profile")}>
+                    <Text style={styles.footerBtnText}>Profile</Text>
                 </TouchableOpacity>
             </View>
-        </ScrollView>
+        </KeyboardAvoidingView>
     );
 };
 
 const styles = StyleSheet.create({
-    container: { 
-        flex: 1, 
-        backgroundColor: '#FFFFFF',
-        paddingHorizontal: 20 
-    },
-    card: { 
-        backgroundColor: '#FFFFFF', 
-        paddingVertical: 20, 
-        marginTop: 10 
-    },
-    title: { 
-        fontSize: 18, 
-        fontWeight: '700', 
-        marginBottom: 25, 
-        textAlign: 'left',
-        color: '#000',
-        textTransform: 'uppercase',
-        letterSpacing: 1
-    },
-    label: { 
-        fontSize: 11,
-        fontWeight: '700', 
-        marginTop: 15, 
-        marginBottom: 5,
-        color: '#666',
-        textTransform: 'uppercase'
-    },
-    input: { 
-        borderWidth: 1, 
-        borderColor: '#000', 
-        borderRadius: 2, 
-        padding: 10,
-        fontSize: 14,
+    header: {
+        paddingTop: Platform.OS === 'ios' ? 60 : 40,
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 20,
+        paddingBottom: 15,
         backgroundColor: '#FFF'
     },
-    row: { 
-        flexDirection: 'row',
-        marginTop: 5
-    },
-    btnSave: { 
-        backgroundColor: '#000', 
-        padding: 15, 
-        borderRadius: 2, 
-        alignItems: 'center', 
-        marginTop: 35,
+    btnBack: {
+        backgroundColor: '#6FCF97',
+        paddingVertical: 6,
+        paddingHorizontal: 12,
+        borderRadius: 20,
         borderWidth: 1,
-        borderColor: '#000'
+        borderColor: '#000',
     },
-    btnText: { 
-        color: '#FFF',
-        fontWeight: '700', 
+    textoBack: {
+        fontFamily: 'Poppins-Regular',
         fontSize: 14,
-        textTransform: 'uppercase',
-        letterSpacing: 1
-    }
+        color: '#ffffff',
+        fontWeight: 'bold'
+    },
+    headerTextContainer: {
+        flex: 1,
+        alignItems: 'center',
+    },
+    headerTitle: {
+        fontSize: 18,
+        fontFamily: 'Poppins-Bold',
+        color: '#000'
+    },
+    headerSubtitle: {
+        fontSize: 12,
+        fontFamily: 'Poppins-Regular',
+        color: '#666'
+    },
+    logoContainer: {
+        width: 45,
+        height: 45,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    logoImage: {
+        width: '100%',
+        height: '100%',
+    },
+    divider: {
+        height: 1,
+        backgroundColor: '#D9D9D9',
+        marginHorizontal: 20,
+        marginBottom: 10
+    },
+    container: {
+        flex: 1,
+        paddingHorizontal: 25,
+    },
+    label: {
+        fontSize: 13,
+        fontFamily: 'Poppins-Medium',
+        marginTop: 15,
+        marginBottom: 5,
+        color: '#000',
+        marginLeft: 5
+    },
+    input: {
+        backgroundColor: '#F2F2F2',
+        borderRadius: 15,
+        paddingHorizontal: 15,
+        height: 45,
+        fontSize: 14,
+        fontFamily: 'Poppins-Regular',
+        color: '#000',
+        borderWidth: 1,
+        borderColor: '#E0E0E0'
+    },
+    textArea: {
+        height: 80,
+        textAlignVertical: 'top',
+        paddingTop: 12,
+        borderRadius: 15
+    },
+    row: {
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+    },
+    btnContainer: {
+        alignItems: 'center',
+        marginTop: 30,
+    },
+    btnSave: {
+        backgroundColor: '#6FCF97',
+        paddingVertical: 12,
+        paddingHorizontal: 60,
+        borderRadius: 25,
+        borderWidth: 1,
+        borderColor: '#000',
+        elevation: 3,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+    },
+    btnText: {
+        color: '#FFF',
+        fontSize: 16,
+        fontFamily: 'Poppins-SemiBold',
+    },
+    footer: {
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        paddingVertical: 15,
+        borderTopWidth: 1,
+        borderColor: '#D9D9D9',
+        backgroundColor: '#FFF',
+    },
+    footerBtn: {
+        backgroundColor: '#6FCF97',
+        borderWidth: 1,
+        borderColor: '#000',
+        paddingVertical: 10,
+        borderRadius: 20,
+        width: '40%',
+        alignItems: 'center',
+    },
+    footerBtnText: {
+        fontSize: 14,
+        fontFamily: 'Poppins-Medium',
+        color: '#FFF'
+    },
 });
 
 export default AdminRegisterPetScreen;

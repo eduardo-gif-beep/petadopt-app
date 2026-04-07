@@ -1,5 +1,17 @@
 import React from 'react';
-import { Button, StyleSheet, Switch, Text, TextInput, View, ScrollView } from 'react-native';
+import { 
+    Platform, 
+    ScrollView, 
+    StyleSheet, 
+    Switch, 
+    Text, 
+    TextInput, 
+    TouchableOpacity, 
+    View, 
+    KeyboardAvoidingView, 
+    TouchableWithoutFeedback, 
+    Keyboard 
+} from 'react-native';
 import { useRegister } from '../viewmodels/useRegister';
 
 const PantallaRegister = ({ navigation }) => {
@@ -10,177 +22,225 @@ const PantallaRegister = ({ navigation }) => {
         age, setAge,
         income, setIncome,
         password, setPassword,
+        confirmPassword, setconfirmPassword,
         tienePatio, setTienePatio,
         loading, handleRegister
     } = useRegister();
 
     const onRegisterPress = async () => {
         const result = await handleRegister(navigation);
-        if (result.success) {
+        if (result && result.success) {
             navigation.replace("Login");
         }
     };
 
     return (
-        <ScrollView contentContainerStyle={styles.contenedor}>
-            <Text style={styles.titulo}>Create Account</Text>
-
-            <TextInput
-                style={styles.input}
-                placeholder="FIRST NAME"
-                value={name}
-                onChangeText={setName}
-            />
-
-            <TextInput
-                style={styles.input}
-                placeholder="LAST NAME"
-                value={lastName}
-                onChangeText={setLastName}
-            />
-
-            <TextInput
-                style={styles.input}
-                placeholder="E-MAIL"
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-            />
-
-            <TextInput
-                style={styles.input}
-                placeholder="AGE"
-                value={age}
-                onChangeText={setAge}
-                keyboardType="numeric"
-            />
-
-            <TextInput
-                style={styles.input}
-                placeholder="INCOME"
-                value={income}
-                onChangeText={setIncome}
-                keyboardType="numeric"
-            />
-
-            <TextInput
-                style={styles.input}
-                placeholder="PASSWORD"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry={true}
-            />
-
-            <View style={styles.switchContainer}>
-                <Text style={styles.switchText}>¿Tienes patio o área para mascotas?</Text>
-                <Switch
-                    value={tienePatio}
-                    onValueChange={setTienePatio}
-                    trackColor={{ false: "#767577", true: "#28a745" }}
-                />
+        <KeyboardAvoidingView 
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={styles.pantalla}
+        >
+            {/* Header fijo arriba */}
+            <View style={styles.header}>
+                <TouchableOpacity 
+                    style={styles.btnBack} 
+                    onPress={() => navigation.canGoBack() ? navigation.goBack() : navigation.navigate("Login")}
+                >
+                    <Text style={styles.textoBack}>← Back</Text>
+                </TouchableOpacity>
             </View>
 
-            <Button
-                title={loading ? "Registrando..." : "Crear Cuenta"}
-                onPress={onRegisterPress}
-                color='#8f8f8f'
-            />
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <ScrollView 
+                    contentContainerStyle={styles.contenedorScroll}
+                    showsVerticalScrollIndicator={false}
+                >
+                    <Text style={styles.instrucciones}>Create an Account</Text>
 
-            <View style={styles.footer}>
-                <Text>¿Ya tienes cuenta?</Text>
-                <Button
-                    title="Ir a login"
-                    onPress={() => navigation.goBack()}
-                    color="#6c757d"
-                />
-            </View>
-        </ScrollView>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="NAME"
+                        placeholderTextColor="#666"
+                        value={name}
+                        onChangeText={setName}
+                    />
+
+                    <TextInput
+                        style={styles.input}
+                        placeholder="LAST NAME"
+                        placeholderTextColor="#666"
+                        value={lastName}
+                        onChangeText={setLastName}
+                    />
+
+                    <TextInput
+                        style={styles.input}
+                        placeholder="E-MAIL"
+                        placeholderTextColor="#666"
+                        value={email}
+                        onChangeText={setEmail}
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                    />
+
+                    <TextInput
+                        style={styles.input}
+                        placeholder="AGE"
+                        placeholderTextColor="#666"
+                        value={age}
+                        onChangeText={setAge}
+                        keyboardType="numeric"
+                    />
+
+                    <TextInput
+                        style={styles.input}
+                        placeholder="INCOME (MOUNTHLY)"
+                        placeholderTextColor="#666"
+                        value={income}
+                        onChangeText={setIncome}
+                        keyboardType="numeric"
+                    />
+
+                    <TextInput
+                        style={styles.input}
+                        placeholder="PASSWORD"
+                        placeholderTextColor="#666"
+                        value={password}
+                        onChangeText={setPassword}
+                        secureTextEntry={true}
+                    />
+
+                    <TextInput
+                        style={styles.input}
+                        placeholder="CONFIRM PASSWORD"
+                        placeholderTextColor="#666"
+                        value={confirmPassword}
+                        onChangeText={setconfirmPassword}
+                        secureTextEntry={true}
+                    />
+
+                    <View style={styles.switchContainer}>
+                        <Text style={styles.switchText}>Do you have Yard / Garden?</Text>
+                        <Switch
+                            value={tienePatio}
+                            onValueChange={setTienePatio}
+                            trackColor={{ false: "#D9D9D9", true: "#6FCF97" }}
+                            thumbColor={tienePatio ? "#FFFFFF" : "#f4f3f4"}
+                        />
+                    </View>
+
+                    <TouchableOpacity 
+                        style={[styles.btnPrincipal, { opacity: loading ? 0.7 : 1 }]} 
+                        onPress={onRegisterPress}
+                        disabled={loading}
+                    >
+                        <Text style={styles.textoBtn}>
+                            {loading ? "Registering..." : "Sign Up"}
+                        </Text>
+                    </TouchableOpacity>
+                </ScrollView>
+            </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
     );
 }
 
 const styles = StyleSheet.create({
-    contenedor: {
-        padding: 30,
+    pantalla: {
+        flex: 1,
         backgroundColor: '#FFFFFF',
-        flexGrow: 1,
-        justifyContent: "center"
     },
-    titulo: {
-        fontSize: 22,
-        fontWeight: "700",
-        marginBottom: 30,
-        textAlign: "left",
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingTop: Platform.OS === 'ios' ? 60 : 40,
+        paddingBottom: 15,
+        paddingHorizontal: 20,
+        borderBottomWidth: 1,
+        borderBottomColor: '#EEEEEE',
+        backgroundColor: '#FFFFFF',
+        zIndex: 10,
+    },
+    btnBack: {
+        backgroundColor: '#6FCF97',
+        paddingVertical: 6,
+        paddingHorizontal: 15,
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: '#000',
+    },
+    textoBack: {
+        fontFamily: 'Poppins-Regular',
+        fontSize: 14,
+        color: '#ffffff',
+        fontWeight: 'bold'
+    },
+    tituloHeader: {
+        fontFamily: 'Poppins-Regular',
+        fontSize: 18,
         color: '#000',
-        textTransform: 'uppercase',
-        letterSpacing: 1
+        marginLeft: 20,
+    },
+    contenedorScroll: {
+        padding: 25,
+        alignItems: 'center',
+        paddingBottom: 50,
+    },
+    instrucciones: {
+        fontFamily: 'Poppins-Regular',
+        fontSize: 26,
+        color: '#000',
+        textAlign: 'left',
+        alignSelf: 'flex-start',
+        marginBottom: 20,
+        fontWeight: 'bold'
     },
     input: {
-        height: 45,
+        width: '100%',
+        height: 50,
+        backgroundColor: '#F2F2F2',
+        borderRadius: 15,
+        paddingHorizontal: 20,
+        marginBottom: 15,
+        fontFamily: 'Poppins-Regular',
+        fontSize: 14,
+        color: '#000',
         borderWidth: 1,
-        borderColor: "#000",
-        borderRadius: 2,
-        paddingHorizontal: 12,
-        marginBottom: 12,
-        backgroundColor: '#FFF',
-        fontSize: 13
+        borderColor: '#E0E0E0'
     },
     switchContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginVertical: 20,
-        padding: 10,
-        borderWidth: 1,
-        borderColor: '#EEE',
-        borderRadius: 2
+        width: '100%',
+        marginVertical: 15,
+        paddingHorizontal: 5,
     },
     switchText: {
-        fontSize: 12,
-        color: '#666',
-        textTransform: 'uppercase',
-        fontWeight: '500'
-    },
-    footer: {
-        marginTop: 30,
-        paddingTop: 20,
-        borderTopWidth: 1,
-        borderColor: '#EEE',
-        gap: 5
+        fontFamily: 'Poppins-Regular',
+        fontSize: 14,
+        color: '#444',
     },
     btnPrincipal: {
-        backgroundColor: '#000',
-        paddingVertical: 12,
-        borderRadius: 2,
-        alignItems: 'center',
-        marginBottom: 10
-    },
-    btnSecundario: {
-        backgroundColor: 'transparent',
-        paddingVertical: 10,
+        width: '100%', // Un poco más ancho para que sea fácil de presionar
+        backgroundColor: '#6FCF97',
+        height: 55,
+        borderRadius: 15,
         borderWidth: 1,
         borderColor: '#000',
-        borderRadius: 2,
-        alignItems: 'center'
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 10,
+        // Sombra para Android/iOS
+        elevation: 4,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
     },
-    textoBtnPrincipal: {
-        color: '#FFF',
-        fontWeight: '700',
-        fontSize: 13,
-        textTransform: 'uppercase'
-    },
-    textoBtnSecundario: {
-        color: '#000',
-        fontWeight: '600',
-        fontSize: 12,
-        textTransform: 'uppercase'
-    },
-    footerLabel: {
-        textAlign: 'center',
-        fontSize: 11,
-        color: '#AAA',
-        marginBottom: 10,
-        textTransform: 'uppercase'
+    textoBtn: {
+        fontFamily: 'Poppins-Regular',
+        fontSize: 18,
+        color: '#ffffff',
+        fontWeight: 'bold'
     }
 });
 

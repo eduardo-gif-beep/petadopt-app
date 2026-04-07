@@ -1,140 +1,195 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import React from 'react';
+import { ActivityIndicator, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useProfile } from '../viewmodels/useProfile';
 
 const ProfileScreen = ({ navigation }) => {
     const { user, loading, handleLogout } = useProfile(navigation);
 
-    if (loading) return <ActivityIndicator size="large" color="#77ddaa" style={{flex:1}} />;
+    if (loading) return <ActivityIndicator size="large" color="#6FCF97" style={{ flex: 1 }} />;
 
     return (
-        <ScrollView>
-            <View style={styles.container}>
-                <View>
-                    <View style={styles.headerTitleBox}>
-                        <Text style={styles.headerPetAdopt}>PetAdopt</Text>
-                        <Text style={styles.headerProfile}>Profile</Text>
-                    </View>
+        <View style={styles.pantalla}>
+            <View style={styles.header}>
+                <TouchableOpacity style={styles.btnBack} onPress={() => navigation.canGoBack() ? navigation.goBack() : navigation.navigate("Pets")}>
+                    <Text style={styles.textoBack}>← Back</Text>
+                </TouchableOpacity>
+                <View style={styles.textContainer}>
+                    <Text style={styles.headerPetAdopt}>PetAdopt</Text>
+                    <Text style={styles.headerProfile}>My Profile</Text>
                 </View>
+            </View>
 
+            <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
                 <View style={styles.avatarContainer}>
                     <View style={styles.avatarCircle}>
-                        <Ionicons name="person" size={70} color="#ccc" />
+                        <Ionicons name="person" size={70} color="#FFFFFF" />
                     </View>
                 </View>
 
-                <View>
-                    <Text>Full Name: {user?.name} {user?.lastName}</Text>
-                    
-                    <Text>E-mail: {user?.email} </Text>
+                <View style={styles.infoSection}>
+                    <Text style={styles.infoLabel}>Full Name</Text>
+                    <View style={styles.infoPill}>
+                        <Text style={styles.infoValue}>{user?.name} {user?.lastName}</Text>
+                    </View>
+
+                    <Text style={styles.infoLabel}>E-mail Address</Text>
+                    <View style={styles.infoPill}>
+                        <Text style={styles.infoValue}>{user?.email}</Text>
+                    </View>
+
+                    <Text style={styles.infoLabel}>Account Type</Text>
+                    <View style={styles.infoPill}>
+                        <Text style={styles.infoValue}>{user?.isAdmin ? "Administrator" : "Adopter"}</Text>
+                    </View>
                 </View>
 
                 {/* Botones Inferiores */}
                 <View style={styles.navBar}>
                     {!user?.isAdmin && (
-                        <TouchableOpacity 
-                            style={styles.btnNav} 
+                        <TouchableOpacity
+                            style={styles.btnNav}
                             onPress={() => navigation.navigate("Requests")}
                         >
                             <Text style={styles.btnText}>Recent Requests</Text>
                         </TouchableOpacity>
                     )}
-                    
-                    <TouchableOpacity onPress={handleLogout}>
-                        <Text>Log out</Text>
+
+                    <TouchableOpacity style={styles.btnLogout} onPress={handleLogout}>
+                        <Text style={styles.logoutText}>Log out</Text>
                     </TouchableOpacity>
                 </View>
-            </View>
-        </ScrollView>
+            </ScrollView>
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
+    pantalla: {
         flex: 1,
-        padding: 24,
         backgroundColor: '#FFFFFF',
-        minHeight: '100%'
     },
-    headerTitleBox: {
-        marginTop: 20,
-        marginBottom: 40,
-        borderLeftWidth: 4,
-        borderColor: '#000',
-        paddingLeft: 15
+    header: {
+        paddingTop: Platform.OS === 'ios' ? 60 : 40,
+        paddingHorizontal: 25,
+        paddingBottom: 20,
+        borderBottomWidth: 10,
+        borderColor: '#D9D9D9',
+        backgroundColor: '#FFF',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'row', 
+        minHeight: 120, 
     },
     headerPetAdopt: {
+        fontFamily: 'Poppins-Bold',
         fontSize: 14,
-        fontWeight: '400',
-        color: '#888',
+        color: '#6FCF97',
         textTransform: 'uppercase',
-        letterSpacing: 1
+        letterSpacing: 2
     },
     headerProfile: {
+        fontFamily: 'Poppins-Bold',
         fontSize: 24,
-        fontWeight: '700',
-        color: '#000'
+        color: '#000',
+        marginTop: -5
+    },
+    container: {
+        padding: 24,
+        alignItems: 'center'
     },
     avatarContainer: {
         alignItems: 'center',
-        marginBottom: 40
+        marginBottom: 30
     },
     avatarCircle: {
-        width: 120,
-        height: 120,
-        borderRadius: 2,
-        borderWidth: 1,
-        borderColor: '#EEE',
-        backgroundColor: '#F9FAFB',
+        width: 130,
+        height: 130,
+        borderRadius: 65,
+        backgroundColor: '#D9D9D9',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        borderWidth: 3,
+        borderColor: '#6FCF97'
+    },
+    infoSection: {
+        width: '100%',
+        marginBottom: 20
     },
     infoLabel: {
-        fontSize: 11,
-        fontWeight: '700',
-        color: '#AAA',
-        textTransform: 'uppercase',
-        marginBottom: 2
+        fontFamily: 'Poppins-SemiBold',
+        fontSize: 13,
+        color: '#000',
+        marginLeft: 15,
+        marginBottom: 5,
+        marginTop: 15
+    },
+    infoPill: {
+        width: '100%',
+        height: 50,
+        backgroundColor: '#D9D9D9',
+        borderRadius: 25,
+        justifyContent: 'center',
+        paddingHorizontal: 20,
     },
     infoValue: {
-        fontSize: 16,
-        color: '#000',
-        marginBottom: 20,
-        borderBottomWidth: 1,
-        borderColor: '#F3F4F6',
-        paddingBottom: 5
+        fontFamily: 'Poppins-Regular',
+        fontSize: 15,
+        color: '#333',
     },
     navBar: {
-        marginTop: 40,
-        paddingTop: 20,
-        borderTopWidth: 1,
-        borderColor: '#000',
-        flexDirection: 'column',
-        gap: 12
+        width: '100%',
+        marginTop: 30,
+        alignItems: 'center',
+        gap: 15
     },
     btnNav: {
-        paddingVertical: 12,
+        width: '100%',
+        height: 55,
+        backgroundColor: '#6FCF97',
+        borderRadius: 25,
+        justifyContent: 'center',
+        alignItems: 'center',
         borderWidth: 1,
         borderColor: '#000',
-        alignItems: 'center',
-        borderRadius: 2
-    },
-    btnLogout: {
-        paddingVertical: 12,
-        alignItems: 'center'
     },
     btnText: {
-        fontSize: 13,
-        fontWeight: '700',
-        textTransform: 'uppercase',
-        color: '#000'
+        fontFamily: 'Poppins-Bold',
+        fontSize: 16,
+        color: '#FFF',
+        textTransform: 'uppercase'
+    },
+    btnLogout: {
+        marginTop: 10,
+        paddingVertical: 10
     },
     logoutText: {
-        fontSize: 13,
-        color: '#888',
+        fontFamily: 'Poppins-Medium',
+        fontSize: 15,
+        color: '#AF4A3D',
         textDecorationLine: 'underline'
-    }
+    },
+        btnBack: {
+        backgroundColor: '#6FCF97',
+        paddingVertical: 8,
+        paddingHorizontal: 15,
+        borderRadius: 25,
+        borderWidth: 1,
+        borderColor: '#000',
+        position: 'absolute',
+        left: 20,
+        top: Platform.OS === 'ios' ? 70 : 50,
+        zIndex: 10,
+    },
+    textoBack: {
+        fontFamily: 'Poppins-Regular',
+        fontSize: 14,
+        color: '#ffffff',
+    },
+        textContainer: {
+        alignItems: 'center',
+        width: '100%',
+    },
 });
 
 export default ProfileScreen;
