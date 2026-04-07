@@ -9,7 +9,6 @@ const AdminDashboardScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            {/* Header estilizado */}
             <View style={styles.header}>
                 <Text style={styles.title}>Admin Panel</Text>
                 <Text style={styles.subTitle}>Adoption Requests</Text>
@@ -87,7 +86,7 @@ const AdminDashboardScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: { 
         flex: 1, 
-        backgroundColor: '#FFFFFF', // Blanco Fondo
+        backgroundColor: '#FFFFFF',
     },
     header: {
         paddingTop: Platform.OS === 'ios' ? 60 : 40,
@@ -107,7 +106,7 @@ const styles = StyleSheet.create({
     subTitle: {
         fontFamily: 'Poppins-Regular',
         fontSize: 14,
-        color: '#6FCF97', // Verde Primario
+        color: '#6FCF97',
         marginTop: -5
     },
     listContent: {
@@ -115,7 +114,7 @@ const styles = StyleSheet.create({
         paddingBottom: 100
     },
     requestCard: { 
-        backgroundColor: '#D9D9D9', // Gris Oscuro para Cards
+        backgroundColor: '#D9D9D9',
         borderRadius: 20,
         padding: 18,
         marginBottom: 15,
@@ -182,17 +181,17 @@ const styles = StyleSheet.create({
     btn: { 
         flex: 1,
         height: 40,
-        borderRadius: 20, // Estilo Píldora
+        borderRadius: 20,
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 1.5,
         borderColor: '#000'
     },
     btnApprove: { 
-        backgroundColor: '#6FCF97', // Verde Primario
+        backgroundColor: '#6FCF97',
     },
     btnReject: { 
-        backgroundColor: '#AF4A3D', // Rojo Crítico
+        backgroundColor: '#AF4A3D',
     },
     btnText: { 
         fontFamily: 'Poppins-Bold',

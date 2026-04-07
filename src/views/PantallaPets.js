@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
         paddingBottom: 100
     },
     card: {
-        backgroundColor: "#D9D9D9", // Gris oscuro para la card
+        backgroundColor: "#D9D9D9",
         borderRadius: 20,
         marginBottom: 20,
         overflow: 'hidden',
@@ -215,8 +215,8 @@ const styles = StyleSheet.create({
     btnView: {
         width: '100%',
         height: 45,
-        backgroundColor: '#6FCF97', // Verde Primario
-        borderRadius: 25, // Estilo píldora
+        backgroundColor: '#6FCF97',
+        borderRadius: 25,
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 1.5,

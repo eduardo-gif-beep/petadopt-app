@@ -23,7 +23,6 @@ const PantallaRegister = ({ navigation }) => {
 
     return (
         <View style={styles.pantalla}>
-            {/* Header con botón Back y Título */}
             <View style={styles.header}>
                 <TouchableOpacity 
                     style={styles.btnBack} 
@@ -37,12 +36,11 @@ const PantallaRegister = ({ navigation }) => {
             <ScrollView contentContainerStyle={styles.contenedor}>
                 <Text style={styles.instrucciones}>Please complete the required fields:</Text>
 
-                {/* Inputs con estilo de píldora gris (#D9D9D9) */}
                 <TextInput
                     style={styles.input}
                     placeholder="NAME"
                     placeholderTextColor="#666"
-                    value={name} // Usando 'name' del viewmodel para el nombre completo
+                    value={name}
                     onChangeText={setName}
                 />
 
@@ -50,7 +48,7 @@ const PantallaRegister = ({ navigation }) => {
                     style={styles.input}
                     placeholder="LAST NAME"
                     placeholderTextColor="#666"
-                    value={lastName} // Usando 'name' del viewmodel para el nombre completo
+                    value={lastName}
                     onChangeText={setLastName}
                 />
 
@@ -66,7 +64,7 @@ const PantallaRegister = ({ navigation }) => {
 
                 <TextInput
                     style={styles.input}
-                    placeholder="AGE" // Mapeado a age según tu lógica actual
+                    placeholder="AGE"
                     placeholderTextColor="#666"
                     value={age}
                     onChangeText={setAge}
@@ -75,7 +73,7 @@ const PantallaRegister = ({ navigation }) => {
 
                 <TextInput
                     style={styles.input}
-                    placeholder="INCOME" // Mapeado a income según tu lógica actual
+                    placeholder="INCOME"
                     placeholderTextColor="#666"
                     value={income}
                     onChangeText={setIncome}
@@ -90,8 +88,6 @@ const PantallaRegister = ({ navigation }) => {
                     secureTextEntry={true}
                 />
 
-
-                {/* Switch de Patio con estilo adaptado */}
                 <View style={styles.switchContainer}>
                     <Text style={styles.switchText}>¿Tiene patio o área?</Text>
                     <Switch
@@ -102,7 +98,6 @@ const PantallaRegister = ({ navigation }) => {
                     />
                 </View>
 
-                {/* Botón Sign Up estilo Píldora Verde (#6FCF97) */}
                 <TouchableOpacity 
                     style={[styles.btnPrincipal, { opacity: loading ? 0.7 : 1 }]} 
                     onPress={onRegisterPress}
@@ -165,8 +160,8 @@ const styles = StyleSheet.create({
     input: {
         width: '100%',
         height: 45,
-        backgroundColor: '#D9D9D9', // Color Cards de tu paleta
-        borderRadius: 25, // Forma de píldora de la imagen
+        backgroundColor: '#D9D9D9',
+        borderRadius: 25,
         paddingHorizontal: 20,
         marginBottom: 15,
         fontFamily: 'Poppins-Regular',
@@ -188,9 +183,9 @@ const styles = StyleSheet.create({
     },
     btnPrincipal: {
         width: '70%',
-        backgroundColor: '#6FCF97', // Verde Primario
+        backgroundColor: '#6FCF97',
         height: 50,
-        borderRadius: 5, // Ligeramente redondeado como el botón de abajo en la imagen
+        borderRadius: 5,
         borderWidth: 2,
         borderColor: '#000',
         justifyContent: 'center',

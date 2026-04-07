@@ -10,7 +10,6 @@ const ProfileScreen = ({ navigation }) => {
 
     return (
         <View style={styles.pantalla}>
-            {/* Header con el estilo de la app */}
             <View style={styles.header}>
                 <Text style={styles.headerPetAdopt}>PetAdopt</Text>
                 <Text style={styles.headerProfile}>My Profile</Text>
@@ -23,7 +22,6 @@ const ProfileScreen = ({ navigation }) => {
                     </View>
                 </View>
 
-                {/* Información del usuario en estilo Píldora Gris */}
                 <View style={styles.infoSection}>
                     <Text style={styles.infoLabel}>Full Name</Text>
                     <View style={styles.infoPill}>
@@ -77,7 +75,7 @@ const styles = StyleSheet.create({
     headerPetAdopt: {
         fontFamily: 'Poppins-Bold',
         fontSize: 14,
-        color: '#6FCF97', // Verde Primario
+        color: '#6FCF97',
         textTransform: 'uppercase',
         letterSpacing: 2
     },
@@ -99,11 +97,11 @@ const styles = StyleSheet.create({
         width: 130,
         height: 130,
         borderRadius: 65,
-        backgroundColor: '#D9D9D9', // Gris oscuro de la paleta
+        backgroundColor: '#D9D9D9',
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 3,
-        borderColor: '#6FCF97' // Borde verde
+        borderColor: '#6FCF97'
     },
     infoSection: {
         width: '100%',
@@ -120,8 +118,8 @@ const styles = StyleSheet.create({
     infoPill: {
         width: '100%',
         height: 50,
-        backgroundColor: '#D9D9D9', // Fondo gris de la paleta
-        borderRadius: 25, // Estilo píldora
+        backgroundColor: '#D9D9D9',
+        borderRadius: 25,
         justifyContent: 'center',
         paddingHorizontal: 20,
     },
@@ -139,7 +137,7 @@ const styles = StyleSheet.create({
     btnNav: {
         width: '100%',
         height: 55,
-        backgroundColor: '#6FCF97', // Verde Primario
+        backgroundColor: '#6FCF97',
         borderRadius: 25,
         justifyContent: 'center',
         alignItems: 'center',
@@ -159,7 +157,7 @@ const styles = StyleSheet.create({
     logoutText: {
         fontFamily: 'Poppins-Medium',
         fontSize: 15,
-        color: '#AF4A3D', // Rojo de tu paleta para acciones de salida
+        color: '#AF4A3D',
         textDecorationLine: 'underline'
     }
 });

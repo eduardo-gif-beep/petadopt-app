@@ -1,5 +1,5 @@
 import React from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Image } from 'react-native';
 import { useAdoptionRequest } from '../viewmodels/useAdoptionRequest';
 
 const AdoptionRequestScreen = ({ route, navigation }) => {
@@ -14,9 +14,11 @@ const AdoptionRequestScreen = ({ route, navigation }) => {
                 {/* Header Section */}
                 <View style={styles.header}>
                     <View style={styles.logoContainer}>
-                        <View style={styles.placeholderLogo}>
-                            <Text style={{ fontSize: 10 }}>Logo</Text>
-                        </View>
+                        <Image
+                            source={require('../images/logo.png')} // Ajusta la ruta según tu estructura de carpetas
+                            style={styles.logoImage}
+                            resizeMode="contain" // Esto evita que el logo se deforme o se corte
+                        />
                     </View>
                     <View style={styles.headerTextContainer}>
                         <Text style={styles.headerTitle}>PetAdopt</Text>
@@ -29,10 +31,10 @@ const AdoptionRequestScreen = ({ route, navigation }) => {
                 {/* Form Card (Bubble Style) */}
                 <View style={styles.bubbleCard}>
                     <Text style={styles.label}>Your Name:</Text>
-                    <TextInput 
-                        style={[styles.input, styles.disabled]} 
-                        value={`${user?.name} ${user?.lastName}`} 
-                        editable={false} 
+                    <TextInput
+                        style={[styles.input, styles.disabled]}
+                        value={`${user?.name} ${user?.lastName}`}
+                        editable={false}
                     />
 
                     <View style={styles.row}>
@@ -80,9 +82,11 @@ const AdoptionRequestScreen = ({ route, navigation }) => {
                     <TouchableOpacity style={styles.footerBtn} onPress={() => navigation.navigate("Requests")}>
                         <Text style={styles.footerBtnText}>Recent Requests</Text>
                     </TouchableOpacity>
+
+
                 )}
-                <TouchableOpacity style={styles.footerBtn} onPress={() => navigation.navigate("Profile")}>
-                    <Text style={styles.footerBtnText}>Profile</Text>
+                <TouchableOpacity style={styles.footerBtn} onPress={() => navigation.navigate("Pets")}>
+                    <Text style={styles.footerBtnText}>Home</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -90,10 +94,10 @@ const AdoptionRequestScreen = ({ route, navigation }) => {
 };
 
 const styles = StyleSheet.create({
-    container: { 
-        flex: 1, 
-        backgroundColor: '#FFFFFF', 
-        paddingHorizontal: 25 
+    container: {
+        flex: 1,
+        backgroundColor: '#FFFFFF',
+        paddingHorizontal: 25
     },
     header: {
         flexDirection: 'row',
@@ -104,6 +108,12 @@ const styles = StyleSheet.create({
     logoContainer: {
         width: 50,
         height: 35,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    logoImage: {
+        width: '100%',
+        height: '100%',
     },
     placeholderLogo: {
         flex: 1,
@@ -139,60 +149,60 @@ const styles = StyleSheet.create({
         borderWidth: 0.5,
         borderColor: '#999'
     },
-    label: { 
+    label: {
         fontSize: 13,
-        fontWeight: '500', 
-        marginBottom: 5, 
+        fontWeight: '500',
+        marginBottom: 5,
         marginTop: 10,
         color: '#000',
         marginLeft: 5
     },
-    input: { 
-        backgroundColor: '#FFF', 
-        borderRadius: 20, 
-        paddingHorizontal: 15, 
-        paddingVertical: 8, 
+    input: {
+        backgroundColor: '#FFF',
+        borderRadius: 20,
+        paddingHorizontal: 15,
+        paddingVertical: 8,
         fontSize: 14,
         color: '#000',
         borderWidth: 1,
         borderColor: '#000',
         minHeight: 40
     },
-    disabled: { 
-        backgroundColor: '#F0F0F0', 
+    disabled: {
+        backgroundColor: '#F0F0F0',
     },
-    textArea: { 
+    textArea: {
         backgroundColor: '#FFF',
-        borderWidth: 1, 
-        borderColor: '#000', 
-        borderRadius: 20, 
-        padding: 15, 
-        height: 80, 
-        textAlignVertical: 'top' 
+        borderWidth: 1,
+        borderColor: '#000',
+        borderRadius: 20,
+        padding: 15,
+        height: 80,
+        textAlignVertical: 'top'
     },
-    row: { 
+    row: {
         flexDirection: 'row',
         justifyContent: 'space-between'
     },
-    btnSend: { 
+    btnSend: {
         backgroundColor: '#76D7A4', // Color verde del botón de la imagen
-        padding: 12, 
-        borderRadius: 10, 
-        alignItems: 'center', 
+        padding: 12,
+        borderRadius: 10,
+        alignItems: 'center',
         marginTop: 25,
         borderWidth: 1,
         borderColor: '#000',
         alignSelf: 'center',
         paddingHorizontal: 30
     },
-    btnText: { 
-        fontSize: 15, 
-        fontWeight: '400', 
+    btnText: {
+        fontSize: 15,
+        fontWeight: '400',
         color: '#000',
     },
-    footer: { 
-        flexDirection: 'row', 
-        justifyContent: 'space-between', 
+    footer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
         paddingHorizontal: 20,
         paddingVertical: 15,
         borderTopWidth: 1,
@@ -202,14 +212,15 @@ const styles = StyleSheet.create({
         bottom: 0,
         width: '100%'
     },
-    footerBtn: { 
+    footerBtn: {
+        marginHorizontal: 20,
         backgroundColor: '#76D7A4',
-        borderWidth: 1, 
-        borderColor: '#000', 
-        paddingVertical: 10, 
-        borderRadius: 0, 
-        width: '48%', 
-        alignItems: 'center' 
+        borderWidth: 1,
+        borderColor: '#000',
+        paddingVertical: 10,
+        borderRadius: 0,
+        width: '48%',
+        alignItems: 'center'
     },
     footerBtnText: {
         fontSize: 14,

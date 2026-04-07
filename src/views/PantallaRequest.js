@@ -1,5 +1,5 @@
 import React from 'react';
-import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
 import { useRecentRequests } from '../viewmodels/useRequests';
 
 const RecentRequestsScreen = ({ navigation }) => {
@@ -8,14 +8,9 @@ const RecentRequestsScreen = ({ navigation }) => {
     const getStatusStyle = (status) => {
         const currentStatus = status ? status.toLowerCase().trim() : '';
         switch (currentStatus) {
-            case 'aprobado':
-                return styles.statusApproved;
-            case 'rechazado':
-                return styles.statusRejected;
-            case 'pendiente':
-                return styles.statusPending;
-            default:
-                return styles.statusPending;
+            case 'aprobado': return styles.statusApproved;
+            case 'rechazado': return styles.statusRejected;
+            default: return styles.statusPending;
         }
     };
 
@@ -26,9 +21,11 @@ const RecentRequestsScreen = ({ navigation }) => {
             {/* Header Section */}
             <View style={styles.header}>
                 <View style={styles.logoContainer}>
-                    <View style={styles.placeholderLogo}>
-                        <Text style={{ fontSize: 10 }}>Logo</Text>
-                    </View>
+                    <Image
+                        source={require('../images/logo.png')}
+                        style={styles.logoImage}
+                        resizeMode="contain"
+                    />
                 </View>
                 <View style={styles.headerTextContainer}>
                     <Text style={styles.headerTitle}>PetAdopt</Text>
@@ -45,43 +42,54 @@ const RecentRequestsScreen = ({ navigation }) => {
                     keyExtractor={(item) => item._id}
                     contentContainerStyle={styles.listContent}
                     refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-                    renderItem={({ item }) => (
-                        <View style={styles.card}>
-                            <View style={styles.cardHeader}>
-                                <View>
-                                    <Text style={styles.petNameLabel}>Pet Name: {item.petId?.name || 'Mascota'}</Text>
-                                    <Text style={styles.dateLabel}>Date: {formatDate(item.createdAt) || '00/00/0000'}</Text>
+                    renderItem={({ item }) => {
+                        // Validación de integridad: ¿Existe la mascota aún?
+                        const petExist = item.petId !== null && item.petId !== undefined;
+
+                        return (
+                            <View style={[styles.card, !petExist && styles.cardDisabled]}>
+                                <View style={styles.cardHeader}>
+                                    <View>
+                                        <Text style={styles.petNameLabel}>
+                                            {petExist ? `Pet Name: ${item.petId.name}` : '🐾 Mascota no disponible'}
+                                        </Text>
+                                        <Text style={styles.dateLabel}>Date: {formatDate(item.createdAt) || '00/00/0000'}</Text>
+                                    </View>
+                                    <View style={[styles.statusBadge, getStatusStyle(item.status)]}>
+                                        <Text style={styles.statusText}>
+                                            {item.status === 'pendiente' ? 'Pending' : item.status === 'rechazado' ? 'Rejected' : 'Approved'}
+                                        </Text>
+                                    </View>
                                 </View>
-                                <View style={[styles.statusBadge, getStatusStyle(item.status)]}>
-                                    <Text style={styles.statusText}>
-                                        {item.status === 'pendiente' ? 'Pending' : item.status === 'rechazado' ? 'Rejected' : 'Approved'}
+
+                                <View style={styles.cardDivider} />
+
+                                <View style={styles.detailsContainer}>
+                                    {petExist ? (
+                                        <>
+                                            <Text style={styles.detailText}>Name: {item.petId.name}</Text>
+                                            <Text style={styles.detailText}>Age: {item.petId.age || 'N/A'}</Text>
+                                            <Text style={styles.detailText}>Color: {item.petId.color || 'N/A'}</Text>
+                                        </>
+                                    ) : (
+                                        <Text style={[styles.detailText, { fontStyle: 'italic', color: '#666' }]}>
+                                            Esta mascota ha sido eliminada del catálogo por el administrador.
+                                        </Text>
+                                    )}
+                                    <Text style={styles.detailText} numberOfLines={2}>
+                                        Motivo: {item.motive || 'No description provided.'}
                                     </Text>
                                 </View>
                             </View>
-
-                            <View style={styles.cardDivider} />
-
-                            <View style={styles.detailsContainer}>
-                                <Text style={styles.detailText}>Name: {item.petId?.name}</Text>
-                                <Text style={styles.detailText}>Age: {item.petId?.age || 'N/A'}</Text>
-                                <Text style={styles.detailText}>Color: {item.petId?.color || 'N/A'}</Text>
-                                <Text style={styles.detailText} numberOfLines={2}>
-                                    {item.motive || 'No description provided.'}
-                                </Text>
-                            </View>
-
-                            <TouchableOpacity style={styles.cancelBtn}>
-                                <Text style={styles.cancelBtnText}>Cancel Request</Text>
-                            </TouchableOpacity>
-                        </View>
-                    )}
+                        );
+                    }}
                 />
             )}
 
             {/* Footer Navigation */}
             <View style={styles.footer}>
-                <TouchableOpacity style={styles.footerBtnActive}>
-                    <Text style={styles.footerBtnText}>Recent Requests</Text>
+                <TouchableOpacity style={styles.footerBtnProfile} onPress={() => navigation.navigate('Pets')}>
+                    <Text style={styles.footerBtnText}>Home</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.footerBtnProfile} onPress={() => navigation.navigate('Profile')}>
                     <Text style={styles.footerBtnText}>Profile</Text>
@@ -106,6 +114,12 @@ const styles = StyleSheet.create({
     logoContainer: {
         width: 50,
         height: 35,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    logoImage: {
+        width: '100%',
+        height: '100%',
     },
     placeholderLogo: {
         flex: 1,
@@ -145,6 +159,10 @@ const styles = StyleSheet.create({
         borderWidth: 0.5,
         borderColor: '#999'
     },
+    cardDisabled: {
+        backgroundColor: '#EEEEEE', // Un tono más claro para indicar que no está disponible
+        borderColor: '#CCC'
+    },
     cardHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -171,9 +189,9 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#000'
     },
-    statusPending: { backgroundColor: '#FFF59D' }, // Amarillo
-    statusRejected: { backgroundColor: '#CC5544' }, // Rojo oscuro
-    statusApproved: { backgroundColor: '#76D7A4' }, // Verde
+    statusPending: { backgroundColor: '#FFF59D' },
+    statusRejected: { backgroundColor: '#CC5544' },
+    statusApproved: { backgroundColor: '#76D7A4' },
     statusText: {
         fontSize: 12,
         fontWeight: '500',
@@ -186,20 +204,6 @@ const styles = StyleSheet.create({
         fontSize: 13,
         color: '#000',
         marginBottom: 2
-    },
-    cancelBtn: {
-        backgroundColor: '#D97B7B',
-        alignSelf: 'flex-end',
-        paddingVertical: 6,
-        paddingHorizontal: 15,
-        borderRadius: 5,
-        borderWidth: 1,
-        borderColor: '#000',
-        marginTop: 10
-    },
-    cancelBtnText: {
-        fontSize: 12,
-        color: '#000'
     },
     footer: {
         flexDirection: 'row',

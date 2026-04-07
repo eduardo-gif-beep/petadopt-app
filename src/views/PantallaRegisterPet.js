@@ -1,5 +1,5 @@
 import React from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Image } from 'react-native';
 import { useAdminPet } from '../viewmodels/useRegisterPet';
 
 const AdminRegisterPetScreen = ({ navigation }) => {
@@ -11,9 +11,11 @@ const AdminRegisterPetScreen = ({ navigation }) => {
                 {/* Header Section */}
                 <View style={styles.header}>
                     <View style={styles.logoContainer}>
-                        <View style={styles.placeholderLogo}>
-                            <Text style={{ fontSize: 10 }}>Logo</Text>
-                        </View>
+                        <Image
+                            source={require('../images/logo.png')} // Ajusta la ruta según tu estructura de carpetas
+                            style={styles.logoImage}
+                            resizeMode="contain" // Esto evita que el logo se deforme o se corte
+                        />
                     </View>
                     <View style={styles.headerTextContainer}>
                         <Text style={styles.headerTitle}>PetAdopt</Text>
@@ -25,41 +27,41 @@ const AdminRegisterPetScreen = ({ navigation }) => {
 
                 {/* Form Fields */}
                 <Text style={styles.label}>NAME</Text>
-                <TextInput 
-                    style={styles.input} 
-                    value={form.name} 
-                    onChangeText={(v) => setForm({ ...form, name: v })} 
+                <TextInput
+                    style={styles.input}
+                    value={form.name}
+                    onChangeText={(v) => setForm({ ...form, name: v })}
                 />
 
                 <Text style={styles.label}>Race</Text>
-                <TextInput 
-                    style={styles.input} 
-                    value={form.dogbreed} 
-                    onChangeText={(v) => setForm({ ...form, dogbreed: v })} 
+                <TextInput
+                    style={styles.input}
+                    value={form.dogbreed}
+                    onChangeText={(v) => setForm({ ...form, dogbreed: v })}
                 />
 
                 <Text style={styles.label}>Age</Text>
-                <TextInput 
-                    style={styles.input} 
-                    value={form.age} 
-                    onChangeText={(v) => setForm({ ...form, age: v })} 
+                <TextInput
+                    style={styles.input}
+                    value={form.age}
+                    onChangeText={(v) => setForm({ ...form, age: v })}
                 />
 
                 <View style={styles.row}>
                     <View style={{ flex: 1, marginRight: 20 }}>
                         <Text style={styles.label}>Size</Text>
-                        <TextInput 
-                            style={styles.inputSmall} 
-                            value={form.size} 
-                            onChangeText={(v) => setForm({ ...form, size: v })} 
+                        <TextInput
+                            style={styles.inputSmall}
+                            value={form.size}
+                            onChangeText={(v) => setForm({ ...form, size: v })}
                         />
                     </View>
                     <View style={{ flex: 1 }}>
                         <Text style={styles.label}>Sex</Text>
-                        <TextInput 
-                            style={styles.inputSmall} 
-                            value={form.gender} 
-                            onChangeText={(v) => setForm({ ...form, gender: v })} 
+                        <TextInput
+                            style={styles.inputSmall}
+                            value={form.gender}
+                            onChangeText={(v) => setForm({ ...form, gender: v })}
                         />
                     </View>
                 </View>
@@ -73,10 +75,11 @@ const AdminRegisterPetScreen = ({ navigation }) => {
                 />
 
                 <Text style={styles.label}>Load Photo</Text>
-                <TextInput 
-                    style={[styles.input, { width: '60%' }]} 
-                    value={form.imageUrl} 
-                    onChangeText={(v) => setForm({ ...form, imageUrl: v })} 
+                <TextInput
+                    style={[styles.input, { width: '60%' }]}
+                    value={form.imageUrl}
+                    onChangeText={(v) => setForm({ ...form, imageUrl: v })}
+                    placeholder="https://..."
                 />
 
                 {/* Submit Button */}
@@ -101,8 +104,8 @@ const AdminRegisterPetScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-    container: { 
-        flex: 1, 
+    container: {
+        flex: 1,
         backgroundColor: '#FFFFFF',
         paddingHorizontal: 30,
     },
@@ -113,9 +116,15 @@ const styles = StyleSheet.create({
         marginBottom: 10
     },
     logoContainer: {
-        width: 60,
-        height: 40,
-    },
+    width: 50,
+    height: 35,
+    justifyContent: 'center',
+    alignItems: 'center',
+},
+logoImage: {
+    width: '100%',
+    height: '100%',
+},
     placeholderLogo: {
         flex: 1,
         borderWidth: 1,
@@ -126,7 +135,7 @@ const styles = StyleSheet.create({
     headerTextContainer: {
         flex: 1,
         alignItems: 'center',
-        marginRight: 60 // Compensar el logo para centrar texto
+        marginRight: 60
     },
     headerTitle: {
         fontSize: 16,
@@ -143,16 +152,16 @@ const styles = StyleSheet.create({
         backgroundColor: '#000',
         marginBottom: 20
     },
-    label: { 
+    label: {
         fontSize: 14,
-        marginTop: 10, 
+        marginTop: 10,
         marginBottom: 5,
         color: '#000',
         marginLeft: 10
     },
-    input: { 
-        backgroundColor: '#D9D9D9', 
-        borderRadius: 20, 
+    input: {
+        backgroundColor: '#D9D9D9',
+        borderRadius: 20,
         paddingHorizontal: 20,
         paddingVertical: 10,
         fontSize: 14,
@@ -160,14 +169,14 @@ const styles = StyleSheet.create({
         minHeight: 40
     },
     inputSmall: {
-        backgroundColor: '#D9D9D9', 
-        borderRadius: 20, 
+        backgroundColor: '#D9D9D9',
+        borderRadius: 20,
         paddingHorizontal: 20,
         paddingVertical: 10,
         fontSize: 14,
         marginBottom: 5,
     },
-    row: { 
+    row: {
         flexDirection: 'row',
         justifyContent: 'space-between'
     },
@@ -176,15 +185,15 @@ const styles = StyleSheet.create({
         marginTop: 30,
         marginBottom: 20
     },
-    btnSave: { 
-        backgroundColor: '#5C6BC0', 
-        paddingVertical: 12, 
+    btnSave: {
+        backgroundColor: '#5C6BC0',
+        paddingVertical: 12,
         paddingHorizontal: 40,
-        borderRadius: 0, 
+        borderRadius: 0,
         borderWidth: 1,
         borderColor: '#000'
     },
-    btnText: { 
+    btnText: {
         color: '#FFF',
         fontSize: 16,
     },
